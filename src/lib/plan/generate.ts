@@ -138,12 +138,34 @@ export function generateWorkbook({
     summary.set(ref, { kind: "date", value: new Date(y!, m! - 1, d!) });
   }
 
-  // At a Glance: dates + total available minutes driven by the line sheets
+  // At a Glance: dates + manpower row + total available minutes
   const glance = patcher.sheet("At a Glance");
+  // The template carries Excel-365 array formulas here that other engines
+  // cannot evaluate; replace them with plain references to the line sheets.
+  const GLANCE_MP = [
+    ["D1", "E1", "F1", "G1", "H1"],
+    ["I1", "J1", "K1", "L1", "M1"],
+    ["N1", "O1", "P1", "Q1", "R1"],
+  ] as const;
+  LINE_SHEETS.forEach((sheetDef, block) => {
+    const refs = GLANCE_MP[block]!;
+    MP_CELLS.forEach((mpCell, slot) => {
+      glance.set(refs[slot]!, {
+        kind: "formula",
+        value: `'${sheetDef.name}'!${mpCell}`,
+      });
+    });
+    glance.set(refs[4]!, {
+      kind: "formula",
+      value: `SUM(${refs[0]}:${refs[3]})`,
+    });
+  });
+  glance.set("S1", { kind: "formula", value: "SUM(H1,M1,R1)" });
   glance.set("V1", {
     kind: "formula",
     value: `'Sewing Line (1-4)'!W2+'Sewing Line (5-8)'!W2+'Sewing Line (9-12)'!W2`,
   });
+
   for (let row = FIRST_ROW; row <= LAST_ROW; row++) {
     const date = dates[row - FIRST_ROW];
     if (!date) {

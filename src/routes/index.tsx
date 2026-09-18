@@ -80,11 +80,16 @@ function Index() {
             </div>
             <span className="font-semibold tracking-tight">Sewing Plan Builder</span>
           </div>
-          {ready && session ? (
-            <Button variant="outline" size="sm" onClick={() => navigate({ to: "/plan" })}>
-              Open current plan
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/import" })}>
+              Import &amp; data review
             </Button>
-          ) : null}
+            {ready && session ? (
+              <Button variant="outline" size="sm" onClick={() => navigate({ to: "/plan" })}>
+                Open current plan
+              </Button>
+            ) : null}
+          </div>
         </div>
       </header>
 
