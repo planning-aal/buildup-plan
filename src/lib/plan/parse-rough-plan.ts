@@ -113,13 +113,30 @@ export function parseRoughPlan(buffer: ArrayBuffer, fileName: string): RoughPlan
   }
 
   entries.sort((a, b) => a.line - b.line || a.date.localeCompare(b.date));
+
+  // Count real planned work per month so thin trailing months (a few stray
+  // rows at the end of the sheet) never become the default selection.
+  const weight = new Map<string, number>();
+  for (const e of entries) {
+    const key = e.date.slice(0, 7);
+    const score = (e.style ? 1 : 0) + (e.target > 0 ? 1 : 0);
+    weight.set(key, (weight.get(key) ?? 0) + score);
+  }
+  const monthList = [...months].sort();
+  const primaryMonth =
+    [...weight.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0] ??
+    monthList[monthList.length - 1] ??
+    new Date().toISOString().slice(0, 7);
+
   return {
     fileName,
     entries,
-    months: [...months].sort(),
+    months: monthList.filter((m) => (weight.get(m) ?? 0) >= 5),
+    primaryMonth,
     warnings,
   };
 }
+
 
 /** Rolls the daily rows of one month into one row per style, per line. */
 export function summariseStyles(
