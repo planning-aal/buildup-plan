@@ -93,10 +93,37 @@ function detectHeader(grid: Grid): { row: number; lines: LineColumn[] } | null {
         targetCol: TARGET_LABEL.test(next) ? index + 1 : null,
       });
     });
-    if (hasDate && lines.length > 0) return { row: r, lines };
+    if (hasDate && lines.length > 0) {
+      inferTargetColumns(grid, r, lines);
+      return { row: r, lines };
+    }
   }
   return null;
 }
+
+/**
+ * Some sheets leave the TARGET header blank. Sample the data instead: if the
+ * line's own column is mostly free text and the next column is mostly numbers,
+ * that next column holds the daily targets.
+ */
+function inferTargetColumns(grid: Grid, headerRow: number, lines: LineColumn[]): void {
+  const sampleRows = grid.slice(headerRow + 1, headerRow + 120);
+  for (const line of lines) {
+    if (line.targetCol !== null) continue;
+    let ownText = 0;
+    let ownNumber = 0;
+    let nextNumber = 0;
+    for (const row of sampleRows) {
+      const own = row?.[line.textCol];
+      const next = row?.[line.textCol + 1];
+      if (typeof own === "string" && squash(own)) ownText++;
+      else if (num(own) !== null) ownNumber++;
+      if (num(next) !== null) nextNumber++;
+    }
+    if (ownText > ownNumber && nextNumber >= 3) line.targetCol = line.textCol + 1;
+  }
+}
+
 
 export function parseSewingPlanWorkbook(
   buffer: ArrayBuffer,
