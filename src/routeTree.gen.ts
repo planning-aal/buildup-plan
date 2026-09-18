@@ -12,12 +12,15 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SmvMasterRouteImport } from './routes/smv-master'
 import { Route as SewingPlanUploadRouteImport } from './routes/sewing-plan-upload'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ScenariosRouteImport } from './routes/scenarios'
+import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ProductionPlanRouteImport } from './routes/production-plan'
 import { Route as PlanningRouteImport } from './routes/planning'
 import { Route as PlanRouteImport } from './routes/plan'
 import { Route as ImportRouteImport } from './routes/import'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CalendarRouteImport } from './routes/calendar'
+import { Route as BuilderRouteImport } from './routes/builder'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LineCapacityIndexRouteImport } from './routes/line-capacity.index'
 import { Route as LineCapacityLineIdRouteImport } from './routes/line-capacity.$lineId'
@@ -35,6 +38,16 @@ const SewingPlanUploadRoute = SewingPlanUploadRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScenariosRoute = ScenariosRouteImport.update({
+  id: '/scenarios',
+  path: '/scenarios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsRoute = ReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProductionPlanRoute = ProductionPlanRouteImport.update({
@@ -67,6 +80,11 @@ const CalendarRoute = CalendarRouteImport.update({
   path: '/calendar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuilderRoute = BuilderRouteImport.update({
+  id: '/builder',
+  path: '/builder',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -85,12 +103,15 @@ const LineCapacityLineIdRoute = LineCapacityLineIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/builder': typeof BuilderRoute
   '/calendar': typeof CalendarRoute
   '/dashboard': typeof DashboardRoute
   '/import': typeof ImportRoute
   '/plan': typeof PlanRoute
   '/planning': typeof PlanningRoute
   '/production-plan': typeof ProductionPlanRoute
+  '/reports': typeof ReportsRoute
+  '/scenarios': typeof ScenariosRoute
   '/settings': typeof SettingsRoute
   '/sewing-plan-upload': typeof SewingPlanUploadRoute
   '/smv-master': typeof SmvMasterRoute
@@ -99,12 +120,15 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/builder': typeof BuilderRoute
   '/calendar': typeof CalendarRoute
   '/dashboard': typeof DashboardRoute
   '/import': typeof ImportRoute
   '/plan': typeof PlanRoute
   '/planning': typeof PlanningRoute
   '/production-plan': typeof ProductionPlanRoute
+  '/reports': typeof ReportsRoute
+  '/scenarios': typeof ScenariosRoute
   '/settings': typeof SettingsRoute
   '/sewing-plan-upload': typeof SewingPlanUploadRoute
   '/smv-master': typeof SmvMasterRoute
@@ -114,12 +138,15 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/builder': typeof BuilderRoute
   '/calendar': typeof CalendarRoute
   '/dashboard': typeof DashboardRoute
   '/import': typeof ImportRoute
   '/plan': typeof PlanRoute
   '/planning': typeof PlanningRoute
   '/production-plan': typeof ProductionPlanRoute
+  '/reports': typeof ReportsRoute
+  '/scenarios': typeof ScenariosRoute
   '/settings': typeof SettingsRoute
   '/sewing-plan-upload': typeof SewingPlanUploadRoute
   '/smv-master': typeof SmvMasterRoute
@@ -130,12 +157,15 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/builder'
     | '/calendar'
     | '/dashboard'
     | '/import'
     | '/plan'
     | '/planning'
     | '/production-plan'
+    | '/reports'
+    | '/scenarios'
     | '/settings'
     | '/sewing-plan-upload'
     | '/smv-master'
@@ -144,12 +174,15 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/builder'
     | '/calendar'
     | '/dashboard'
     | '/import'
     | '/plan'
     | '/planning'
     | '/production-plan'
+    | '/reports'
+    | '/scenarios'
     | '/settings'
     | '/sewing-plan-upload'
     | '/smv-master'
@@ -158,12 +191,15 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/builder'
     | '/calendar'
     | '/dashboard'
     | '/import'
     | '/plan'
     | '/planning'
     | '/production-plan'
+    | '/reports'
+    | '/scenarios'
     | '/settings'
     | '/sewing-plan-upload'
     | '/smv-master'
@@ -173,12 +209,15 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BuilderRoute: typeof BuilderRoute
   CalendarRoute: typeof CalendarRoute
   DashboardRoute: typeof DashboardRoute
   ImportRoute: typeof ImportRoute
   PlanRoute: typeof PlanRoute
   PlanningRoute: typeof PlanningRoute
   ProductionPlanRoute: typeof ProductionPlanRoute
+  ReportsRoute: typeof ReportsRoute
+  ScenariosRoute: typeof ScenariosRoute
   SettingsRoute: typeof SettingsRoute
   SewingPlanUploadRoute: typeof SewingPlanUploadRoute
   SmvMasterRoute: typeof SmvMasterRoute
@@ -207,6 +246,20 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/scenarios': {
+      id: '/scenarios'
+      path: '/scenarios'
+      fullPath: '/scenarios'
+      preLoaderRoute: typeof ScenariosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports': {
+      id: '/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof ReportsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/production-plan': {
@@ -251,6 +304,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalendarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/builder': {
+      id: '/builder'
+      path: '/builder'
+      fullPath: '/builder'
+      preLoaderRoute: typeof BuilderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -277,12 +337,15 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BuilderRoute: BuilderRoute,
   CalendarRoute: CalendarRoute,
   DashboardRoute: DashboardRoute,
   ImportRoute: ImportRoute,
   PlanRoute: PlanRoute,
   PlanningRoute: PlanningRoute,
   ProductionPlanRoute: ProductionPlanRoute,
+  ReportsRoute: ReportsRoute,
+  ScenariosRoute: ScenariosRoute,
   SettingsRoute: SettingsRoute,
   SewingPlanUploadRoute: SewingPlanUploadRoute,
   SmvMasterRoute: SmvMasterRoute,
