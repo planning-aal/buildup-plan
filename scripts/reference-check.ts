@@ -26,6 +26,7 @@ const SLOTS = [2, 6, 10, 14]; // 0-based column of the Style cell per line block
 
 let compared = 0;
 let matched = 0;
+let tenHourCells = 0;
 let totalTarget = 0;
 let totalEarned = 0;
 let totalAvailable = 0;
@@ -47,6 +48,10 @@ for (const name of SHEETS) {
     let lineEarned = 0;
 
     for (let r = 5; r < grid.length; r++) {
+      const dateCell = grid[r]?.[0];
+      const isDateRow =
+        dateCell instanceof Date || (typeof dateCell === "string" && /^\d{4}-\d{2}-\d{2}/.test(dateCell));
+      if (!isDateRow) continue; // skip the average / total rows at the bottom
       const target = grid[r]?.[styleCol + 1];
       const smv = grid[r]?.[styleCol + 2];
       const excelEff = grid[r]?.[styleCol + 3];
@@ -63,6 +68,7 @@ for (const name of SHEETS) {
       if (typeof excelEff === "number") {
         compared++;
         if (Math.abs(engineEff - excelEff) < 1e-9) matched++;
+        else if (Math.abs(engineEff * (480 / 600) - excelEff) < 1e-9) tenHourCells++;
         else mismatches.push(`${name} row ${r + 1}: excel ${excelEff} vs engine ${engineEff}`);
       }
     }
@@ -76,6 +82,7 @@ console.log({
   file,
   cellsCompared: compared,
   matched,
+  cellsStillUsing600: tenHourCells,
   mismatches: mismatches.slice(0, 10),
   totalTarget,
   totalEarnedMinutes: Math.round(totalEarned),
