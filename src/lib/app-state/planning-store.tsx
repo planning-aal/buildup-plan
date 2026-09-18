@@ -83,7 +83,7 @@ type Ctx = {
   setPeriod: (period: PlanningPeriod) => void;
   patchLine: (lineId: string, patch: Partial<LinePlanSettings>) => void;
   patchRamp: (lineId: string, patch: Partial<RampProfile>) => void;
-  applyToAllLines: (patch: Partial<LinePlanSettings> & { ramp?: Partial<RampProfile> }) => void;
+  applyToAllLines: (patch: LineBulkPatch) => void;
   setDayStatus: (
     date: string,
     patch: Partial<Pick<WorkingCalendarDay, "workingStatus" | "holidayReason" | "holidayType" | "workingHours">>,
@@ -97,6 +97,8 @@ type Ctx = {
   engineInput: PlanningInput | null;
   reset: () => void;
 };
+
+export type LineBulkPatch = Omit<Partial<LinePlanSettings>, "ramp"> & { ramp?: Partial<RampProfile> };
 
 const PlanningContext = createContext<Ctx | null>(null);
 
@@ -206,7 +208,7 @@ export function PlanningProvider({ children }: { children: ReactNode }) {
   );
 
   const applyToAllLines = useCallback(
-    (patch: Partial<LinePlanSettings> & { ramp?: Partial<RampProfile> }) => {
+    (patch: LineBulkPatch) => {
       const { ramp, ...rest } = patch;
       setLineSettings((prev) =>
         prev.map((l) =>
