@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SewingPlanUploadRouteImport } from './routes/sewing-plan-upload'
 import { Route as PlanningRouteImport } from './routes/planning'
 import { Route as PlanRouteImport } from './routes/plan'
 import { Route as ImportRouteImport } from './routes/import'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SewingPlanUploadRoute = SewingPlanUploadRouteImport.update({
+  id: '/sewing-plan-upload',
+  path: '/sewing-plan-upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PlanningRoute = PlanningRouteImport.update({
   id: '/planning',
   path: '/planning',
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/import': typeof ImportRoute
   '/plan': typeof PlanRoute
   '/planning': typeof PlanningRoute
+  '/sewing-plan-upload': typeof SewingPlanUploadRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/import': typeof ImportRoute
   '/plan': typeof PlanRoute
   '/planning': typeof PlanningRoute
+  '/sewing-plan-upload': typeof SewingPlanUploadRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,33 @@ export interface FileRoutesById {
   '/import': typeof ImportRoute
   '/plan': typeof PlanRoute
   '/planning': typeof PlanningRoute
+  '/sewing-plan-upload': typeof SewingPlanUploadRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/import' | '/plan' | '/planning'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/import'
+    | '/plan'
+    | '/planning'
+    | '/sewing-plan-upload'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/import' | '/plan' | '/planning'
-  id: '__root__' | '/' | '/dashboard' | '/import' | '/plan' | '/planning'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/import'
+    | '/plan'
+    | '/planning'
+    | '/sewing-plan-upload'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/import'
+    | '/plan'
+    | '/planning'
+    | '/sewing-plan-upload'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,10 +105,18 @@ export interface RootRouteChildren {
   ImportRoute: typeof ImportRoute
   PlanRoute: typeof PlanRoute
   PlanningRoute: typeof PlanningRoute
+  SewingPlanUploadRoute: typeof SewingPlanUploadRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sewing-plan-upload': {
+      id: '/sewing-plan-upload'
+      path: '/sewing-plan-upload'
+      fullPath: '/sewing-plan-upload'
+      preLoaderRoute: typeof SewingPlanUploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/planning': {
       id: '/planning'
       path: '/planning'
@@ -125,6 +161,7 @@ const rootRouteChildren: RootRouteChildren = {
   ImportRoute: ImportRoute,
   PlanRoute: PlanRoute,
   PlanningRoute: PlanningRoute,
+  SewingPlanUploadRoute: SewingPlanUploadRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
