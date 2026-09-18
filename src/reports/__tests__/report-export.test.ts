@@ -20,9 +20,9 @@ function setup() {
     "update_sewing_plan.xlsx",
   );
 
-  const period = imported.plan.dateRange;
+  const period = imported.plan.dateRange!;
   const calendar = calendarForPeriod(period, 8, []);
-  const lineSettings: LinePlanSettings[] = imported.lines.map((l) => ({
+  const lineSettings: LinePlanSettings[] = imported.plan.lines.map((l): LinePlanSettings => ({
     lineId: l.id,
     lineName: l.label,
     active: true,
@@ -39,7 +39,7 @@ function setup() {
 
   const input: PlanningInput = {
     entries: imported.entries,
-    lines: imported.lines,
+    lines: imported.plan.lines,
     lineSettings,
     calendar,
     smvMaster,
