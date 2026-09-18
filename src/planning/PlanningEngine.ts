@@ -229,7 +229,6 @@ export function runPlanningEngine(input: PlanningInput): PlanningResult {
     const planned = state?.planned ?? 0;
     const remaining = run.orderQty === null ? null : Math.max(run.orderQty - planned, 0);
     const shortage = remaining ?? 0;
-    const projection = projectCompletion(shortage, state?.lastRate ?? 0, []);
 
     let status: OrderPlan["status"];
     if (run.smvStatus !== "SMV_FOUND") status = "SMV_MISSING";
@@ -267,7 +266,6 @@ export function runPlanningEngine(input: PlanningInput): PlanningResult {
       afterDates,
     ).date;
   }
-  void projection_unused(projectCompletion);
 
   /* ------------------------------ summaries ------------------------------ */
 
@@ -359,8 +357,6 @@ function nextWorkingDates(from: string, count: number): string[] {
   }
   return out;
 }
-
-function projection_unused<T>(_x: T): void {}
 
 /* --------------------------- scenario comparison ------------------------- */
 
