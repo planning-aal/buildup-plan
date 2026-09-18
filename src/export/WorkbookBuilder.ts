@@ -74,6 +74,8 @@ function writeSheet(
 ) {
   const { meta } = report;
   const colCount = Math.max(table.columns.length, 4);
+  // header banner spans enough columns that the title is never clipped in print
+  const bannerCols = Math.max(colCount, 7);
 
   // ---- branded header block ------------------------------------------------
   if (logoId !== null && logo) {
@@ -92,17 +94,17 @@ function writeSheet(
   const titleCell = sheet.getCell(1, 2);
   titleCell.value = `ARMANA GROUP — ${table.title.toUpperCase()}`;
   titleCell.font = titleFont;
-  sheet.mergeCells(1, 2, 1, colCount);
+  sheet.mergeCells(1, 2, 1, bannerCols);
 
   const line2 = sheet.getCell(2, 2);
   line2.value = `${meta.factory}  ·  ${meta.periodLabel}  ·  Scenario: ${meta.scenarioName}`;
   line2.font = subtitleFont;
-  sheet.mergeCells(2, 2, 2, colCount);
+  sheet.mergeCells(2, 2, 2, bannerCols);
 
   const line3 = sheet.getCell(3, 2);
   line3.value = `Report ${meta.reportId}  ·  Plan ${meta.planId}  ·  Generated ${new Date(meta.generatedAt).toLocaleString("en-GB")}  ·  Status ${meta.status}`;
   line3.font = subtitleFont;
-  sheet.mergeCells(3, 2, 3, colCount);
+  sheet.mergeCells(3, 2, 3, bannerCols);
 
   let row = 5;
 
