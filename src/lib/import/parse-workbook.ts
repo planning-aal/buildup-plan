@@ -228,7 +228,8 @@ export function parseSewingPlanWorkbook(
 
         if (!squash(rawText) && target === null) continue;
 
-        const entryType = classifyEntry(rawText);
+        const hasText = squash(rawText).length > 0;
+        const entryType = hasText ? classifyEntry(rawText) : "OTHER";
         const style = parseStyle(rawText);
         const po = parsePo(rawText);
         const qty = parseQuantities(rawText);
@@ -239,10 +240,13 @@ export function parseSewingPlanWorkbook(
         if (po.multiple) flags.push("MULTIPLE_PO");
         if (qty.ambiguous) flags.push("AMBIGUOUS_QUANTITY");
         if (delivery.raw && !delivery.start) flags.push("UNPARSED_DELIVERY_DATE");
-        if (entryType === "UNKNOWN" && squash(rawText)) flags.push("UNRECOGNIZED_TEXT");
+        if (entryType === "UNKNOWN" && hasText) flags.push("UNRECOGNIZED_TEXT");
 
         let parseStatus: ParseStatus = "PARSED";
-        if (!squash(rawText)) parseStatus = target === null ? "EMPTY" : "PARSED";
+        if (!hasText) {
+          parseStatus = target === null ? "EMPTY" : "PARSED";
+          flags.push("CARRY_OVER_DAY");
+        }
         else if (entryType === "UNKNOWN" || entryType === "OTHER") parseStatus = "UNPARSED";
         else if (flags.length > 0) parseStatus = "PARTIAL";
 
@@ -255,7 +259,7 @@ export function parseSewingPlanWorkbook(
           lineNo: line.lineNo,
           lineLabel: line.label,
           rawText,
-          entryType: squash(rawText) ? entryType : "UNKNOWN",
+          entryType,
           styleNo: style.styleNo,
           secondaryCode: style.secondaryCode,
           poNo: po.poNo,
