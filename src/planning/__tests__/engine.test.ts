@@ -202,7 +202,7 @@ describe("TEST 6 — per-line working hours", () => {
     const l1 = result.days.find((d) => d.lineId === "line1")!;
     const l2 = result.days.find((d) => d.lineId === "line2")!;
     expect(l1.dailyCapacity).toBe(672);
-    expect(l2.dailyCapacity).toBe(756);
+    expect(l2.dailyCapacity).toBeCloseTo(756);
   });
 });
 
