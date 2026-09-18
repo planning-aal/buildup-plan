@@ -103,9 +103,13 @@ function PlanningPage() {
         })),
       );
       const range = parsed.plan.dateRange;
-      const next = range
-        ? { from: range.from.slice(0, 8) + "01", to: period.to }
-        : period;
+      let next = period;
+      if (range) {
+        const start = new Date(`${range.from}T00:00:00Z`);
+        const from = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), 1));
+        const to = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth() + 1, 0));
+        next = { from: from.toISOString().slice(0, 10), to: to.toISOString().slice(0, 10) };
+      }
       setPeriod(next);
       setCalendar(buildCalendar(next.from, next.to));
       setResult(null);
