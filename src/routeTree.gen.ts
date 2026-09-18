@@ -20,6 +20,7 @@ import { Route as PlanRouteImport } from './routes/plan'
 import { Route as ImportRouteImport } from './routes/import'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CalendarRouteImport } from './routes/calendar'
+import { Route as BuildupRouteImport } from './routes/buildup'
 import { Route as BuilderRouteImport } from './routes/builder'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LineCapacityIndexRouteImport } from './routes/line-capacity.index'
@@ -80,6 +81,11 @@ const CalendarRoute = CalendarRouteImport.update({
   path: '/calendar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuildupRoute = BuildupRouteImport.update({
+  id: '/buildup',
+  path: '/buildup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BuilderRoute = BuilderRouteImport.update({
   id: '/builder',
   path: '/builder',
@@ -104,6 +110,7 @@ const LineCapacityLineIdRoute = LineCapacityLineIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/builder': typeof BuilderRoute
+  '/buildup': typeof BuildupRoute
   '/calendar': typeof CalendarRoute
   '/dashboard': typeof DashboardRoute
   '/import': typeof ImportRoute
@@ -121,6 +128,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/builder': typeof BuilderRoute
+  '/buildup': typeof BuildupRoute
   '/calendar': typeof CalendarRoute
   '/dashboard': typeof DashboardRoute
   '/import': typeof ImportRoute
@@ -139,6 +147,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/builder': typeof BuilderRoute
+  '/buildup': typeof BuildupRoute
   '/calendar': typeof CalendarRoute
   '/dashboard': typeof DashboardRoute
   '/import': typeof ImportRoute
@@ -158,6 +167,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/builder'
+    | '/buildup'
     | '/calendar'
     | '/dashboard'
     | '/import'
@@ -175,6 +185,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/builder'
+    | '/buildup'
     | '/calendar'
     | '/dashboard'
     | '/import'
@@ -192,6 +203,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/builder'
+    | '/buildup'
     | '/calendar'
     | '/dashboard'
     | '/import'
@@ -210,6 +222,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BuilderRoute: typeof BuilderRoute
+  BuildupRoute: typeof BuildupRoute
   CalendarRoute: typeof CalendarRoute
   DashboardRoute: typeof DashboardRoute
   ImportRoute: typeof ImportRoute
@@ -304,6 +317,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalendarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buildup': {
+      id: '/buildup'
+      path: '/buildup'
+      fullPath: '/buildup'
+      preLoaderRoute: typeof BuildupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/builder': {
       id: '/builder'
       path: '/builder'
@@ -338,6 +358,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BuilderRoute: BuilderRoute,
+  BuildupRoute: BuildupRoute,
   CalendarRoute: CalendarRoute,
   DashboardRoute: DashboardRoute,
   ImportRoute: ImportRoute,
