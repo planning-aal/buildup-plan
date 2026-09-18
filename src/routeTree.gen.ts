@@ -18,6 +18,7 @@ import { Route as ImportRouteImport } from './routes/import'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LineCapacityIndexRouteImport } from './routes/line-capacity.index'
 
 const SmvMasterRoute = SmvMasterRouteImport.update({
   id: '/smv-master',
@@ -64,6 +65,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LineCapacityIndexRoute = LineCapacityIndexRouteImport.update({
+  id: '/line-capacity/',
+  path: '/line-capacity/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/sewing-plan-upload': typeof SewingPlanUploadRoute
   '/smv-master': typeof SmvMasterRoute
+  '/line-capacity/': typeof LineCapacityIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/sewing-plan-upload': typeof SewingPlanUploadRoute
   '/smv-master': typeof SmvMasterRoute
+  '/line-capacity': typeof LineCapacityIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,6 +106,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/sewing-plan-upload': typeof SewingPlanUploadRoute
   '/smv-master': typeof SmvMasterRoute
+  '/line-capacity/': typeof LineCapacityIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +120,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sewing-plan-upload'
     | '/smv-master'
+    | '/line-capacity/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +132,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sewing-plan-upload'
     | '/smv-master'
+    | '/line-capacity'
   id:
     | '__root__'
     | '/'
@@ -133,6 +144,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sewing-plan-upload'
     | '/smv-master'
+    | '/line-capacity/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -145,6 +157,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   SewingPlanUploadRoute: typeof SewingPlanUploadRoute
   SmvMasterRoute: typeof SmvMasterRoute
+  LineCapacityIndexRoute: typeof LineCapacityIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -212,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/line-capacity/': {
+      id: '/line-capacity/'
+      path: '/line-capacity'
+      fullPath: '/line-capacity/'
+      preLoaderRoute: typeof LineCapacityIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -225,6 +245,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   SewingPlanUploadRoute: SewingPlanUploadRoute,
   SmvMasterRoute: SmvMasterRoute,
+  LineCapacityIndexRoute: LineCapacityIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
