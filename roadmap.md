@@ -13,3 +13,7 @@
 - [x] At a Glance L1 fix in the existing generator
 
 ## Phase 2 — Production planning & capacity engine (NOT STARTED, awaiting validation)
+
+## Phase 2 — planning & capacity engine: DONE
+- Engine modules under src/planning, 10/10 unit tests, /planning workspace, Jan 2026 reference comparison (296/312 exact). See PHASE2_REPORT.md.
+- Phase 3 (Armana Group UI/UX): NOT STARTED — awaiting approval.
