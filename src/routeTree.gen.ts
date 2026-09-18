@@ -13,6 +13,7 @@ import { Route as SmvMasterRouteImport } from './routes/smv-master'
 import { Route as SewingPlanUploadRouteImport } from './routes/sewing-plan-upload'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ScenariosRouteImport } from './routes/scenarios'
+import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ProductionPlanRouteImport } from './routes/production-plan'
 import { Route as PlanningRouteImport } from './routes/planning'
 import { Route as PlanRouteImport } from './routes/plan'
@@ -41,6 +42,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const ScenariosRoute = ScenariosRouteImport.update({
   id: '/scenarios',
   path: '/scenarios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsRoute = ReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProductionPlanRoute = ProductionPlanRouteImport.update({
@@ -97,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/plan': typeof PlanRoute
   '/planning': typeof PlanningRoute
   '/production-plan': typeof ProductionPlanRoute
+  '/reports': typeof ReportsRoute
   '/scenarios': typeof ScenariosRoute
   '/settings': typeof SettingsRoute
   '/sewing-plan-upload': typeof SewingPlanUploadRoute
@@ -112,6 +119,7 @@ export interface FileRoutesByTo {
   '/plan': typeof PlanRoute
   '/planning': typeof PlanningRoute
   '/production-plan': typeof ProductionPlanRoute
+  '/reports': typeof ReportsRoute
   '/scenarios': typeof ScenariosRoute
   '/settings': typeof SettingsRoute
   '/sewing-plan-upload': typeof SewingPlanUploadRoute
@@ -128,6 +136,7 @@ export interface FileRoutesById {
   '/plan': typeof PlanRoute
   '/planning': typeof PlanningRoute
   '/production-plan': typeof ProductionPlanRoute
+  '/reports': typeof ReportsRoute
   '/scenarios': typeof ScenariosRoute
   '/settings': typeof SettingsRoute
   '/sewing-plan-upload': typeof SewingPlanUploadRoute
@@ -145,6 +154,7 @@ export interface FileRouteTypes {
     | '/plan'
     | '/planning'
     | '/production-plan'
+    | '/reports'
     | '/scenarios'
     | '/settings'
     | '/sewing-plan-upload'
@@ -160,6 +170,7 @@ export interface FileRouteTypes {
     | '/plan'
     | '/planning'
     | '/production-plan'
+    | '/reports'
     | '/scenarios'
     | '/settings'
     | '/sewing-plan-upload'
@@ -175,6 +186,7 @@ export interface FileRouteTypes {
     | '/plan'
     | '/planning'
     | '/production-plan'
+    | '/reports'
     | '/scenarios'
     | '/settings'
     | '/sewing-plan-upload'
@@ -191,6 +203,7 @@ export interface RootRouteChildren {
   PlanRoute: typeof PlanRoute
   PlanningRoute: typeof PlanningRoute
   ProductionPlanRoute: typeof ProductionPlanRoute
+  ReportsRoute: typeof ReportsRoute
   ScenariosRoute: typeof ScenariosRoute
   SettingsRoute: typeof SettingsRoute
   SewingPlanUploadRoute: typeof SewingPlanUploadRoute
@@ -227,6 +240,13 @@ declare module '@tanstack/react-router' {
       path: '/scenarios'
       fullPath: '/scenarios'
       preLoaderRoute: typeof ScenariosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports': {
+      id: '/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof ReportsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/production-plan': {
@@ -303,6 +323,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlanRoute: PlanRoute,
   PlanningRoute: PlanningRoute,
   ProductionPlanRoute: ProductionPlanRoute,
+  ReportsRoute: ReportsRoute,
   ScenariosRoute: ScenariosRoute,
   SettingsRoute: SettingsRoute,
   SewingPlanUploadRoute: SewingPlanUploadRoute,
