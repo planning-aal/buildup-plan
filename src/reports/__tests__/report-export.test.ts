@@ -38,6 +38,7 @@ function setup() {
   );
 
   const input: PlanningInput = {
+    planId: imported.plan.id,
     entries: imported.entries,
     lines: imported.plan.lines,
     lineSettings,
@@ -45,8 +46,7 @@ function setup() {
     smvMaster,
     period,
     allowOverproduction: false,
-    sewingPlanSource: "update_sewing_plan.xlsx",
-    smvSource: "test",
+    sources: { sewingPlan: "update_sewing_plan.xlsx", smv: "test" },
   };
 
   const result = runPlanningEngine(input);
