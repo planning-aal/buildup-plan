@@ -84,6 +84,10 @@ function Index() {
             <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/import" })}>
               Import &amp; data review
             </Button>
+            <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/planning" })}>
+              Capacity &amp; planning engine
+            </Button>
+
             {ready && session ? (
               <Button variant="outline" size="sm" onClick={() => navigate({ to: "/plan" })}>
                 Open current plan
