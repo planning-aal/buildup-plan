@@ -53,7 +53,7 @@ const PAGE_SIZE = 40;
 const TYPES = ["ALL", "STYLE", "PO", "BALANCE", "LINE_SUPPORT", "TOTAL_QTY", "INSTRUCTION", "OTHER", "UNKNOWN"];
 
 function entryStatus(entry: SewingPlanEntry): string {
-  if (entry.parseStatus === "ERROR") return "VALIDATION_ERROR";
+  if (entry.parseStatus === "UNPARSED") return "VALIDATION_ERROR";
   if (entry.parseStatus === "PARTIAL" || entry.entryType === "UNKNOWN") return "REVIEW REQUIRED";
   return "OK";
 }
