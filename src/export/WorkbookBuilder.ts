@@ -92,17 +92,17 @@ function writeSheet(
   sheet.getRow(3).height = LOGO_ROW_HEIGHT;
 
   const titleCell = sheet.getCell(1, 2);
-  titleCell.value = `ARMANA GROUP — ${table.title.toUpperCase()}`;
+  titleCell.value = table.title.toUpperCase();
   titleCell.font = titleFont;
   sheet.mergeCells(1, 2, 1, bannerCols);
 
   const line2 = sheet.getCell(2, 2);
-  line2.value = `${meta.factory}  ·  ${meta.periodLabel}  ·  Scenario: ${meta.scenarioName}`;
+  line2.value = `Armana Group  ·  ${meta.factory}  ·  ${meta.periodLabel}  ·  ${meta.scenarioName}`;
   line2.font = subtitleFont;
   sheet.mergeCells(2, 2, 2, bannerCols);
 
   const line3 = sheet.getCell(3, 2);
-  line3.value = `Report ${meta.reportId}  ·  Plan ${meta.planId}  ·  Generated ${new Date(meta.generatedAt).toLocaleString("en-GB")}  ·  Status ${meta.status}`;
+  line3.value = `${meta.reportId}  ·  Plan ${meta.planId}  ·  ${new Date(meta.generatedAt).toLocaleString("en-GB")}  ·  ${meta.status}`;
   line3.font = subtitleFont;
   sheet.mergeCells(3, 2, 3, bannerCols);
 
