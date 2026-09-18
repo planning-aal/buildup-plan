@@ -1,18 +1,15 @@
 # Roadmap
 
-## In progress
-- [ ] Fix `At a Glance!L1` showing #VALUE! in the generated workbook.
+## Phase 1 — Excel reverse engineering & data architecture (DONE)
+- [x] Audit existing project (KEEP/MODIFY/CREATE map) — see PHASE1_REPORT.md
+- [x] Workbook/sheet detection, line detection (any number of lines)
+- [x] Style / PO / quantity / delivery-date parsers, entry-type classification
+- [x] Raw text preservation (rawText + sheet/row/column)
+- [x] Sheet1 style-block parser
+- [x] Normalized data model + validation model
+- [x] SMV master, working calendar, efficiency profile architecture
+- [x] Import preview screen at /import
+- [x] Acceptance test against the real sewing plan workbook
+- [x] At a Glance L1 fix in the existing generator
 
-## Phase 1 — Armana production planning foundation (requested 18 Sep 2026)
-- [ ] Audit existing project (routes, components, parsers, generator) → keep/modify/create map.
-- [ ] Robust sewing-plan parser: sheet + line-group detection, any number of lines, raw text always preserved.
-- [ ] Field parsers: style no + secondary code, PO, quantity, delivery date range, buyer/planner/season.
-- [ ] Entry-type classification: STYLE / PO / BALANCE / LINE_SUPPORT / TOTAL_QTY / INSTRUCTION / OTHER / UNKNOWN.
-- [ ] Sheet1 style-block parser (style → daily qty per line).
-- [ ] Normalized data model (SewingPlanEntry, Style, PurchaseOrder, SMVMaster, WorkingCalendar, EfficiencyProfile, LineSettings, ValidationIssue).
-- [ ] Validation system: critical / warning / information categories + counts.
-- [ ] Import preview screen: summary stats + inspectable row table with status filters.
-- [ ] Phase 1 report back to user; stop before Phase 2 (calculation engine).
-
-## Later (Phase 2, not started)
-- Production planning & capacity calculation engine.
+## Phase 2 — Production planning & capacity engine (NOT STARTED, awaiting validation)
