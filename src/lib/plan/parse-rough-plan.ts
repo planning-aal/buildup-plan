@@ -29,8 +29,11 @@ export type RoughPlan = {
   fileName: string;
   entries: DayEntry[];
   months: string[];
+  /** Month with the most planned work — the one we open by default. */
+  primaryMonth: string;
   warnings: string[];
 };
+
 
 const SHEET_LINES: Record<string, number[]> = {
   "line 1-4": [1, 2, 3, 4],
