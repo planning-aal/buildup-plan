@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import {
   CalendarDays,
   FileSpreadsheet,
+  FileText,
   GaugeCircle,
   LayoutDashboard,
   ListChecks,
@@ -25,7 +26,8 @@ const NAV = [
   { to: "/line-capacity", label: "Line Capacity", icon: GaugeCircle },
   { to: "/calendar", label: "Calendar", icon: CalendarDays },
   { to: "/scenarios", label: "Scenarios", icon: SlidersHorizontal },
-  { to: "/reports", label: "Reports", icon: FileSpreadsheet },
+  { to: "/buildup", label: "Production Buildup", icon: FileSpreadsheet },
+  { to: "/reports", label: "Reports", icon: FileText },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
 
