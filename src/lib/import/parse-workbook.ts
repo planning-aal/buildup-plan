@@ -87,7 +87,7 @@ function detectHeader(grid: Grid): { row: number; lines: LineColumn[] } | null {
       if (!m) return;
       const next = cells[index + 1] ?? "";
       lines.push({
-        label: squash(cell).toUpperCase(),
+        label: `LINE-${Number(m[1])}`,
         lineNo: Number(m[1]),
         textCol: index,
         targetCol: TARGET_LABEL.test(next) ? index + 1 : null,
