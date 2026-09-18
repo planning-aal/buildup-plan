@@ -179,9 +179,16 @@ export function generateWorkbook({
       value: entry.orderQty || entry.plannedQty,
     });
   }
+  // Clear the stale helper block the template carries below the data range
+  // (it holds leftover buyer labels and a cached #N/A from the source file).
+  for (let row = STYLE_LAST_ROW + 1; row <= 87; row++) {
+    styleSheet.set(`C${row}`, { kind: "blank" });
+    styleSheet.set(`D${row}`, { kind: "blank" });
+  }
   const [yy, mm] = settings.month.split("-").map(Number);
   styleSheet.set("B1", { kind: "date", value: new Date(yy!, mm! - 1, 1) });
   styleSheet.set("K1", { kind: "date", value: new Date(yy!, mm! - 1, 1) });
+
 
   return patcher.toBlob();
 }
