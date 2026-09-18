@@ -1,0 +1,21 @@
+import { readFileSync, writeFileSync } from "node:fs";
+import { parseSewingPlanWorkbook } from "@/lib/import/parse-workbook";
+import { makeSmvRecord } from "@/lib/master/master-data";
+import { calendarForPeriod } from "@/planning/CalendarCalculator";
+import { runPlanningEngine } from "@/planning/PlanningEngine";
+import { buildProductionBuildupReport } from "@/reports";
+import { buildWorkbook } from "@/export/WorkbookBuilder";
+
+const buf = readFileSync("/tmp/user-uploads/update_sewing_plan-5.xlsx");
+const imported = parseSewingPlanWorkbook(buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer, "update_sewing_plan.xlsx");
+const period = imported.plan.dateRange!;
+const calendar = calendarForPeriod(period, 8, []);
+const lineSettings = imported.plan.lines.map((l: any) => ({ lineId: l.id, lineName: l.label, active: true, workingHours: 8, manpower: 73, ramp: { mode: "FIXED", startEfficiency: 0.5, maxEfficiency: 0.8, rampStep: 0.05, customValues: {} } }));
+const styles = new Set(imported.entries.map((e) => e.styleNo).filter(Boolean) as string[]);
+const smvMaster = [...styles].map((s, i) => makeSmvRecord({ styleNo: s, smv: 15 + (i % 10), source: "qa" }));
+const result = runPlanningEngine({ planId: imported.plan.id, entries: imported.entries, lines: imported.plan.lines, lineSettings, calendar, smvMaster, period, allowOverproduction: false, sources: { sewingPlan: "update_sewing_plan.xlsx", smv: "qa" } });
+const logoBuf = readFileSync("src/assets/armana-logo.png");
+const report = buildProductionBuildupReport({ result, imported, calendar, lineSettings, smvMaster, period });
+const wb = buildWorkbook({ report, logo: { data: logoBuf.buffer.slice(logoBuf.byteOffset, logoBuf.byteOffset + logoBuf.byteLength) as ArrayBuffer, width: 1024, height: 256 } });
+await wb.xlsx.writeFile("/tmp/pbp/" + report.meta.fileName);
+console.log(report.meta.fileName, report.meta.status, report.tables.length, "tables");
