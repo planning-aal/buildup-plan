@@ -286,7 +286,7 @@ export class XlsxPatcher {
       // a cached error/string type on a formula cell is meaningless once the
       // value is gone and makes some engines refuse the cell
       xml = xml.replace(
-        /<c([^>]*?)\st="(?:e|str)"([^>]*)>(<f)/g,
+        /<c([^>]*?)\st="e"([^>]*)>(<f)/g,
         (_all, a: string, b: string, f: string) => `<c${a}${b}>${f}`,
       );
       this.files[path] = strToU8(xml);
