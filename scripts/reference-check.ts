@@ -22,7 +22,7 @@ if (!file) throw new Error("usage: bun scripts/reference-check.ts <workbook.xlsx
 
 const wb = XLSX.read(readFileSync(file), { cellDates: true, cellFormula: false });
 const SHEETS = ["Sewing Line (1-4)", "Sewing Line (5-8)", "Sewing Line (9-12)"];
-const SLOTS = [3, 7, 11, 15]; // 0-based column of the Style cell per line block
+const SLOTS = [2, 6, 10, 14]; // 0-based column of the Style cell per line block
 
 let compared = 0;
 let matched = 0;
