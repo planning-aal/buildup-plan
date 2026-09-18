@@ -9,11 +9,39 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SmvMasterRouteImport } from './routes/smv-master'
+import { Route as SewingPlanUploadRouteImport } from './routes/sewing-plan-upload'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ProductionPlanRouteImport } from './routes/production-plan'
 import { Route as PlanningRouteImport } from './routes/planning'
 import { Route as PlanRouteImport } from './routes/plan'
 import { Route as ImportRouteImport } from './routes/import'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LineCapacityIndexRouteImport } from './routes/line-capacity.index'
+import { Route as LineCapacityLineIdRouteImport } from './routes/line-capacity.$lineId'
 
+const SmvMasterRoute = SmvMasterRouteImport.update({
+  id: '/smv-master',
+  path: '/smv-master',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SewingPlanUploadRoute = SewingPlanUploadRouteImport.update({
+  id: '/sewing-plan-upload',
+  path: '/sewing-plan-upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductionPlanRoute = ProductionPlanRouteImport.update({
+  id: '/production-plan',
+  path: '/production-plan',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PlanningRoute = PlanningRouteImport.update({
   id: '/planning',
   path: '/planning',
@@ -29,48 +57,165 @@ const ImportRoute = ImportRouteImport.update({
   path: '/import',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CalendarRoute = CalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LineCapacityIndexRoute = LineCapacityIndexRouteImport.update({
+  id: '/line-capacity/',
+  path: '/line-capacity/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LineCapacityLineIdRoute = LineCapacityLineIdRouteImport.update({
+  id: '/line-capacity/$lineId',
+  path: '/line-capacity/$lineId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/calendar': typeof CalendarRoute
+  '/dashboard': typeof DashboardRoute
   '/import': typeof ImportRoute
   '/plan': typeof PlanRoute
   '/planning': typeof PlanningRoute
+  '/production-plan': typeof ProductionPlanRoute
+  '/settings': typeof SettingsRoute
+  '/sewing-plan-upload': typeof SewingPlanUploadRoute
+  '/smv-master': typeof SmvMasterRoute
+  '/line-capacity/$lineId': typeof LineCapacityLineIdRoute
+  '/line-capacity/': typeof LineCapacityIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/calendar': typeof CalendarRoute
+  '/dashboard': typeof DashboardRoute
   '/import': typeof ImportRoute
   '/plan': typeof PlanRoute
   '/planning': typeof PlanningRoute
+  '/production-plan': typeof ProductionPlanRoute
+  '/settings': typeof SettingsRoute
+  '/sewing-plan-upload': typeof SewingPlanUploadRoute
+  '/smv-master': typeof SmvMasterRoute
+  '/line-capacity/$lineId': typeof LineCapacityLineIdRoute
+  '/line-capacity': typeof LineCapacityIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/calendar': typeof CalendarRoute
+  '/dashboard': typeof DashboardRoute
   '/import': typeof ImportRoute
   '/plan': typeof PlanRoute
   '/planning': typeof PlanningRoute
+  '/production-plan': typeof ProductionPlanRoute
+  '/settings': typeof SettingsRoute
+  '/sewing-plan-upload': typeof SewingPlanUploadRoute
+  '/smv-master': typeof SmvMasterRoute
+  '/line-capacity/$lineId': typeof LineCapacityLineIdRoute
+  '/line-capacity/': typeof LineCapacityIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/import' | '/plan' | '/planning'
+  fullPaths:
+    | '/'
+    | '/calendar'
+    | '/dashboard'
+    | '/import'
+    | '/plan'
+    | '/planning'
+    | '/production-plan'
+    | '/settings'
+    | '/sewing-plan-upload'
+    | '/smv-master'
+    | '/line-capacity/$lineId'
+    | '/line-capacity/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/import' | '/plan' | '/planning'
-  id: '__root__' | '/' | '/import' | '/plan' | '/planning'
+  to:
+    | '/'
+    | '/calendar'
+    | '/dashboard'
+    | '/import'
+    | '/plan'
+    | '/planning'
+    | '/production-plan'
+    | '/settings'
+    | '/sewing-plan-upload'
+    | '/smv-master'
+    | '/line-capacity/$lineId'
+    | '/line-capacity'
+  id:
+    | '__root__'
+    | '/'
+    | '/calendar'
+    | '/dashboard'
+    | '/import'
+    | '/plan'
+    | '/planning'
+    | '/production-plan'
+    | '/settings'
+    | '/sewing-plan-upload'
+    | '/smv-master'
+    | '/line-capacity/$lineId'
+    | '/line-capacity/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CalendarRoute: typeof CalendarRoute
+  DashboardRoute: typeof DashboardRoute
   ImportRoute: typeof ImportRoute
   PlanRoute: typeof PlanRoute
   PlanningRoute: typeof PlanningRoute
+  ProductionPlanRoute: typeof ProductionPlanRoute
+  SettingsRoute: typeof SettingsRoute
+  SewingPlanUploadRoute: typeof SewingPlanUploadRoute
+  SmvMasterRoute: typeof SmvMasterRoute
+  LineCapacityLineIdRoute: typeof LineCapacityLineIdRoute
+  LineCapacityIndexRoute: typeof LineCapacityIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/smv-master': {
+      id: '/smv-master'
+      path: '/smv-master'
+      fullPath: '/smv-master'
+      preLoaderRoute: typeof SmvMasterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sewing-plan-upload': {
+      id: '/sewing-plan-upload'
+      path: '/sewing-plan-upload'
+      fullPath: '/sewing-plan-upload'
+      preLoaderRoute: typeof SewingPlanUploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/production-plan': {
+      id: '/production-plan'
+      path: '/production-plan'
+      fullPath: '/production-plan'
+      preLoaderRoute: typeof ProductionPlanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/planning': {
       id: '/planning'
       path: '/planning'
@@ -92,6 +237,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ImportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calendar': {
+      id: '/calendar'
+      path: '/calendar'
+      fullPath: '/calendar'
+      preLoaderRoute: typeof CalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -99,14 +258,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/line-capacity/': {
+      id: '/line-capacity/'
+      path: '/line-capacity'
+      fullPath: '/line-capacity/'
+      preLoaderRoute: typeof LineCapacityIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/line-capacity/$lineId': {
+      id: '/line-capacity/$lineId'
+      path: '/line-capacity/$lineId'
+      fullPath: '/line-capacity/$lineId'
+      preLoaderRoute: typeof LineCapacityLineIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CalendarRoute: CalendarRoute,
+  DashboardRoute: DashboardRoute,
   ImportRoute: ImportRoute,
   PlanRoute: PlanRoute,
   PlanningRoute: PlanningRoute,
+  ProductionPlanRoute: ProductionPlanRoute,
+  SettingsRoute: SettingsRoute,
+  SewingPlanUploadRoute: SewingPlanUploadRoute,
+  SmvMasterRoute: SmvMasterRoute,
+  LineCapacityLineIdRoute: LineCapacityLineIdRoute,
+  LineCapacityIndexRoute: LineCapacityIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
