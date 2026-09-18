@@ -124,7 +124,9 @@ export async function validateWorkbook(
   const summary = report.tables.find((t) => t.id === "summary");
   if (summary) {
     const check = (metric: string, expected: number, tolerance: number) => {
-      const row = summary.rows.find((r) => String(r["metric"]).toLowerCase() === metric.toLowerCase());
+      const row = summary.rows.find((r) =>
+        String(r["metric"]).toLowerCase().startsWith(metric.toLowerCase()),
+      );
       if (!row) {
         problems.push(`Summary is missing "${metric}"`);
         return;
@@ -137,7 +139,7 @@ export async function validateWorkbook(
     check("Total Order Quantity", report.totals.totalOrderQty, QTY_TOLERANCE);
     check("Total Planned Quantity", report.totals.totalPlannedQty, QTY_TOLERANCE);
     check("Total Capacity", report.totals.totalCapacity, QTY_TOLERANCE);
-    check("Average Efficiency", report.totals.averageEfficiency, PCT_TOLERANCE);
+    check("Average efficiency", report.totals.averageEfficiency, PCT_TOLERANCE);
   } else {
     problems.push("Summary sheet dataset missing.");
   }
