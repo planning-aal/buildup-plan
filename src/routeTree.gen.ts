@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SmvMasterRouteImport } from './routes/smv-master'
 import { Route as SewingPlanUploadRouteImport } from './routes/sewing-plan-upload'
 import { Route as PlanningRouteImport } from './routes/planning'
 import { Route as PlanRouteImport } from './routes/plan'
@@ -16,6 +17,11 @@ import { Route as ImportRouteImport } from './routes/import'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SmvMasterRoute = SmvMasterRouteImport.update({
+  id: '/smv-master',
+  path: '/smv-master',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SewingPlanUploadRoute = SewingPlanUploadRouteImport.update({
   id: '/sewing-plan-upload',
   path: '/sewing-plan-upload',
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/plan': typeof PlanRoute
   '/planning': typeof PlanningRoute
   '/sewing-plan-upload': typeof SewingPlanUploadRoute
+  '/smv-master': typeof SmvMasterRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/plan': typeof PlanRoute
   '/planning': typeof PlanningRoute
   '/sewing-plan-upload': typeof SewingPlanUploadRoute
+  '/smv-master': typeof SmvMasterRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,6 +79,7 @@ export interface FileRoutesById {
   '/plan': typeof PlanRoute
   '/planning': typeof PlanningRoute
   '/sewing-plan-upload': typeof SewingPlanUploadRoute
+  '/smv-master': typeof SmvMasterRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,6 +90,7 @@ export interface FileRouteTypes {
     | '/plan'
     | '/planning'
     | '/sewing-plan-upload'
+    | '/smv-master'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -89,6 +99,7 @@ export interface FileRouteTypes {
     | '/plan'
     | '/planning'
     | '/sewing-plan-upload'
+    | '/smv-master'
   id:
     | '__root__'
     | '/'
@@ -97,6 +108,7 @@ export interface FileRouteTypes {
     | '/plan'
     | '/planning'
     | '/sewing-plan-upload'
+    | '/smv-master'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,10 +118,18 @@ export interface RootRouteChildren {
   PlanRoute: typeof PlanRoute
   PlanningRoute: typeof PlanningRoute
   SewingPlanUploadRoute: typeof SewingPlanUploadRoute
+  SmvMasterRoute: typeof SmvMasterRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/smv-master': {
+      id: '/smv-master'
+      path: '/smv-master'
+      fullPath: '/smv-master'
+      preLoaderRoute: typeof SmvMasterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sewing-plan-upload': {
       id: '/sewing-plan-upload'
       path: '/sewing-plan-upload'
@@ -162,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlanRoute: PlanRoute,
   PlanningRoute: PlanningRoute,
   SewingPlanUploadRoute: SewingPlanUploadRoute,
+  SmvMasterRoute: SmvMasterRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
