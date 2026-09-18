@@ -50,7 +50,7 @@ function Index() {
         toast.error(plan.warnings[0] ?? "Nothing could be read from that file.");
         return;
       }
-      const month = plan.months[plan.months.length - 1]!;
+      const month = plan.primaryMonth;
       const existing = loadSession();
       const next = {
         plan,

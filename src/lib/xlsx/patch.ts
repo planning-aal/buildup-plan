@@ -273,11 +273,33 @@ export class XlsxPatcher {
     delete this.files["xl/calcChain.xml"];
   }
 
+  /**
+   * Drop cached results from formula cells. Excel honours fullCalcOnLoad, but
+   * LibreOffice / Google Sheets happily show the stale cached number, which
+   * would leave totals from the template month in the new report.
+   */
+  private dropCachedFormulaValues(): void {
+    for (const path of this.sheetPaths.values()) {
+      let xml = this.text(path);
+      if (!xml.includes("<f")) continue;
+      xml = xml.replace(/(<f(?:\s[^>]*)?(?:\/>|>[\s\S]*?<\/f>))<v>[\s\S]*?<\/v>/g, "$1");
+      // a cached error/string type on a formula cell is meaningless once the
+      // value is gone and makes some engines refuse the cell
+      xml = xml.replace(
+        /<c([^>]*?)\st="e"([^>]*)>(<f)/g,
+        (_all, a: string, b: string, f: string) => `<c${a}${b}>${f}`,
+      );
+      this.files[path] = strToU8(xml);
+    }
+  }
+
   toBlob(): Blob {
     for (const [name, doc] of this.open) {
       this.files[this.sheetPaths.get(name)!] = strToU8(doc.toXml());
     }
+    this.dropCachedFormulaValues();
     this.forceRecalc();
+
     const zipped = zipSync(this.files, { level: 6 });
     const copy = new Uint8Array(zipped);
     return new Blob([copy.buffer as ArrayBuffer], {
