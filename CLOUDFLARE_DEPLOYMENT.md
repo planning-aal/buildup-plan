@@ -38,19 +38,23 @@ block in `wrangler.toml`.
 ## 4. Create the file storage buckets
 
 ```bash
-bunx wrangler r2 bucket create armana-planning-files-dev
-bunx wrangler r2 bucket create armana-planning-files-staging
-bunx wrangler r2 bucket create armana-planning-files-prod
+bunx wrangler r2 bucket create armana-planning-dev
+bunx wrangler r2 bucket create armana-planning-staging
+bunx wrangler r2 bucket create armana-planning-prod
 ```
 
+The names must match the `bucket_name` values in `wrangler.toml`.
 Keep all buckets private. Files are served only through the authenticated
 download endpoints.
 
 ## 5. Run the migrations
 
+The development environment is the top-level config in `wrangler.toml`, so dev
+commands take **no** `--env` flag. Staging and production do.
+
 ```bash
-bunx wrangler d1 migrations apply armana-planning-dev --env development
-bunx wrangler d1 migrations apply armana-planning-staging --env staging
+bunx wrangler d1 migrations apply armana-planning-dev --remote
+bunx wrangler d1 migrations apply armana-planning-staging --env staging --remote
 bunx wrangler d1 migrations apply armana-planning-prod --env production --remote
 ```
 
@@ -61,11 +65,12 @@ Migrations are ordered and immutable: `0001_initial_schema`,
 ## 6. Configuration and secrets
 
 Non-secret values live in `wrangler.toml` (`ENVIRONMENT`, `APP_BASE_URL`,
-`ALLOWED_ORIGINS`). Secrets are set through Wrangler and never committed:
+`ALLOWED_ORIGINS`). Secrets are set through Wrangler and never committed. The
+names must match what the Worker reads:
 
 ```bash
-bunx wrangler secret put ACCESS_AUD --env production        # Cloudflare Access application audience
-bunx wrangler secret put ACCESS_TEAM_DOMAIN --env production
+bunx wrangler secret put CF_ACCESS_AUD --env production            # Cloudflare Access application audience
+bunx wrangler secret put CF_ACCESS_TEAM_DOMAIN --env production
 ```
 
 Set `APP_BASE_URL` per environment; the application never hard-codes a
@@ -76,7 +81,7 @@ Set `APP_BASE_URL` per environment; the application never hard-codes a
 1. Zero Trust → Access → Applications → Add a self-hosted application for the
    Worker hostname.
 2. Add an Access policy for the Armana identity provider.
-3. Copy the application audience tag into the `ACCESS_AUD` secret.
+3. Copy the application audience tag into the `CF_ACCESS_AUD` secret.
 
 The Worker reads `cf-access-authenticated-user-email` and
 `cf-access-jwt-assertion`, then looks the person up in the `users` table to get
@@ -84,15 +89,17 @@ their role and factory. Add users with:
 
 ```bash
 bunx wrangler d1 execute armana-planning-prod --env production --remote \
-  --command "INSERT INTO users (id, factory_id, email, full_name, role, active) VALUES ('usr_1','fac_armana_apparels','name@armanagroup.com','Full Name','PLANNER',1)"
+  --command "INSERT INTO users (id, factory_id, email, user_name, role, active) VALUES ('usr_1','fac_armana_apparels','name@armanagroup.com','Full Name','PLANNER',1)"
 ```
 
 Roles: ADMIN, PLANNER, IE, PRODUCTION, MANAGEMENT, VIEWER.
 
 ## 8. Deploy
 
+Development is the top-level environment — no flag:
+
 ```bash
-bunx wrangler deploy --env development
+bunx wrangler deploy
 bunx wrangler deploy --env staging
 bunx wrangler deploy --env production
 ```
