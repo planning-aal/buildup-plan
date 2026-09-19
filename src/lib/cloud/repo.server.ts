@@ -784,3 +784,26 @@ export async function loadLineSettings(
     calendarOverrides: JSON.parse(String(r["overrides_json"] ?? "{}")) as LinePlanSettings["calendarOverrides"],
   }));
 }
+
+export async function calendarByVersion(versionId: string): Promise<WorkingCalendarDay[]> {
+  const db = await requireDb();
+  const res = await db
+    .prepare("SELECT * FROM working_calendar WHERE calendar_version_id = ?1 ORDER BY calendar_date")
+    .bind(versionId)
+    .all<{
+      calendar_date: string;
+      day_label: string;
+      working_status: WorkingCalendarDay["workingStatus"];
+      holiday_type: string | null;
+      holiday_reason: string | null;
+      working_hours: number;
+    }>();
+  return res.results.map((r) => ({
+    date: r.calendar_date,
+    day: r.day_label,
+    workingStatus: r.working_status,
+    holidayType: r.holiday_type,
+    holidayReason: r.holiday_reason,
+    workingHours: r.working_hours,
+  }));
+}

@@ -30,10 +30,16 @@ import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as ApiCalendarRouteImport } from './routes/api/calendar'
 import { Route as ApiSmvIndexRouteImport } from './routes/api/smv.index'
 import { Route as ApiSewingPlansIndexRouteImport } from './routes/api/sewing-plans.index'
+import { Route as ApiPlansIndexRouteImport } from './routes/api/plans.index'
 import { Route as ApiSmvUploadRouteImport } from './routes/api/smv.upload'
 import { Route as ApiSewingPlansUploadRouteImport } from './routes/api/sewing-plans.upload'
 import { Route as ApiSewingPlansIdRouteImport } from './routes/api/sewing-plans.$id'
+import { Route as ApiPlansGenerateRouteImport } from './routes/api/plans.generate'
+import { Route as ApiPlansIdRouteImport } from './routes/api/plans.$id'
 import { Route as ApiSewingPlansIdEntriesRouteImport } from './routes/api/sewing-plans.$id.entries'
+import { Route as ApiPlansIdSummaryRouteImport } from './routes/api/plans.$id.summary'
+import { Route as ApiPlansIdStylesRouteImport } from './routes/api/plans.$id.styles'
+import { Route as ApiPlansIdLinesRouteImport } from './routes/api/plans.$id.lines'
 
 const SmvMasterRoute = SmvMasterRouteImport.update({
   id: '/smv-master',
@@ -140,6 +146,11 @@ const ApiSewingPlansIndexRoute = ApiSewingPlansIndexRouteImport.update({
   path: '/api/sewing-plans/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPlansIndexRoute = ApiPlansIndexRouteImport.update({
+  id: '/api/plans/',
+  path: '/api/plans/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiSmvUploadRoute = ApiSmvUploadRouteImport.update({
   id: '/api/smv/upload',
   path: '/api/smv/upload',
@@ -155,10 +166,35 @@ const ApiSewingPlansIdRoute = ApiSewingPlansIdRouteImport.update({
   path: '/api/sewing-plans/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPlansGenerateRoute = ApiPlansGenerateRouteImport.update({
+  id: '/api/plans/generate',
+  path: '/api/plans/generate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPlansIdRoute = ApiPlansIdRouteImport.update({
+  id: '/api/plans/$id',
+  path: '/api/plans/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiSewingPlansIdEntriesRoute = ApiSewingPlansIdEntriesRouteImport.update({
   id: '/entries',
   path: '/entries',
   getParentRoute: () => ApiSewingPlansIdRoute,
+} as any)
+const ApiPlansIdSummaryRoute = ApiPlansIdSummaryRouteImport.update({
+  id: '/summary',
+  path: '/summary',
+  getParentRoute: () => ApiPlansIdRoute,
+} as any)
+const ApiPlansIdStylesRoute = ApiPlansIdStylesRouteImport.update({
+  id: '/styles',
+  path: '/styles',
+  getParentRoute: () => ApiPlansIdRoute,
+} as any)
+const ApiPlansIdLinesRoute = ApiPlansIdLinesRouteImport.update({
+  id: '/lines',
+  path: '/lines',
+  getParentRoute: () => ApiPlansIdRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -181,11 +217,17 @@ export interface FileRoutesByFullPath {
   '/api/scenarios': typeof ApiScenariosRoute
   '/line-capacity/$lineId': typeof LineCapacityLineIdRoute
   '/line-capacity/': typeof LineCapacityIndexRoute
+  '/api/plans/$id': typeof ApiPlansIdRouteWithChildren
+  '/api/plans/generate': typeof ApiPlansGenerateRoute
   '/api/sewing-plans/$id': typeof ApiSewingPlansIdRouteWithChildren
   '/api/sewing-plans/upload': typeof ApiSewingPlansUploadRoute
   '/api/smv/upload': typeof ApiSmvUploadRoute
+  '/api/plans/': typeof ApiPlansIndexRoute
   '/api/sewing-plans/': typeof ApiSewingPlansIndexRoute
   '/api/smv/': typeof ApiSmvIndexRoute
+  '/api/plans/$id/lines': typeof ApiPlansIdLinesRoute
+  '/api/plans/$id/styles': typeof ApiPlansIdStylesRoute
+  '/api/plans/$id/summary': typeof ApiPlansIdSummaryRoute
   '/api/sewing-plans/$id/entries': typeof ApiSewingPlansIdEntriesRoute
 }
 export interface FileRoutesByTo {
@@ -208,11 +250,17 @@ export interface FileRoutesByTo {
   '/api/scenarios': typeof ApiScenariosRoute
   '/line-capacity/$lineId': typeof LineCapacityLineIdRoute
   '/line-capacity': typeof LineCapacityIndexRoute
+  '/api/plans/$id': typeof ApiPlansIdRouteWithChildren
+  '/api/plans/generate': typeof ApiPlansGenerateRoute
   '/api/sewing-plans/$id': typeof ApiSewingPlansIdRouteWithChildren
   '/api/sewing-plans/upload': typeof ApiSewingPlansUploadRoute
   '/api/smv/upload': typeof ApiSmvUploadRoute
+  '/api/plans': typeof ApiPlansIndexRoute
   '/api/sewing-plans': typeof ApiSewingPlansIndexRoute
   '/api/smv': typeof ApiSmvIndexRoute
+  '/api/plans/$id/lines': typeof ApiPlansIdLinesRoute
+  '/api/plans/$id/styles': typeof ApiPlansIdStylesRoute
+  '/api/plans/$id/summary': typeof ApiPlansIdSummaryRoute
   '/api/sewing-plans/$id/entries': typeof ApiSewingPlansIdEntriesRoute
 }
 export interface FileRoutesById {
@@ -236,11 +284,17 @@ export interface FileRoutesById {
   '/api/scenarios': typeof ApiScenariosRoute
   '/line-capacity/$lineId': typeof LineCapacityLineIdRoute
   '/line-capacity/': typeof LineCapacityIndexRoute
+  '/api/plans/$id': typeof ApiPlansIdRouteWithChildren
+  '/api/plans/generate': typeof ApiPlansGenerateRoute
   '/api/sewing-plans/$id': typeof ApiSewingPlansIdRouteWithChildren
   '/api/sewing-plans/upload': typeof ApiSewingPlansUploadRoute
   '/api/smv/upload': typeof ApiSmvUploadRoute
+  '/api/plans/': typeof ApiPlansIndexRoute
   '/api/sewing-plans/': typeof ApiSewingPlansIndexRoute
   '/api/smv/': typeof ApiSmvIndexRoute
+  '/api/plans/$id/lines': typeof ApiPlansIdLinesRoute
+  '/api/plans/$id/styles': typeof ApiPlansIdStylesRoute
+  '/api/plans/$id/summary': typeof ApiPlansIdSummaryRoute
   '/api/sewing-plans/$id/entries': typeof ApiSewingPlansIdEntriesRoute
 }
 export interface FileRouteTypes {
@@ -265,11 +319,17 @@ export interface FileRouteTypes {
     | '/api/scenarios'
     | '/line-capacity/$lineId'
     | '/line-capacity/'
+    | '/api/plans/$id'
+    | '/api/plans/generate'
     | '/api/sewing-plans/$id'
     | '/api/sewing-plans/upload'
     | '/api/smv/upload'
+    | '/api/plans/'
     | '/api/sewing-plans/'
     | '/api/smv/'
+    | '/api/plans/$id/lines'
+    | '/api/plans/$id/styles'
+    | '/api/plans/$id/summary'
     | '/api/sewing-plans/$id/entries'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -292,11 +352,17 @@ export interface FileRouteTypes {
     | '/api/scenarios'
     | '/line-capacity/$lineId'
     | '/line-capacity'
+    | '/api/plans/$id'
+    | '/api/plans/generate'
     | '/api/sewing-plans/$id'
     | '/api/sewing-plans/upload'
     | '/api/smv/upload'
+    | '/api/plans'
     | '/api/sewing-plans'
     | '/api/smv'
+    | '/api/plans/$id/lines'
+    | '/api/plans/$id/styles'
+    | '/api/plans/$id/summary'
     | '/api/sewing-plans/$id/entries'
   id:
     | '__root__'
@@ -319,11 +385,17 @@ export interface FileRouteTypes {
     | '/api/scenarios'
     | '/line-capacity/$lineId'
     | '/line-capacity/'
+    | '/api/plans/$id'
+    | '/api/plans/generate'
     | '/api/sewing-plans/$id'
     | '/api/sewing-plans/upload'
     | '/api/smv/upload'
+    | '/api/plans/'
     | '/api/sewing-plans/'
     | '/api/smv/'
+    | '/api/plans/$id/lines'
+    | '/api/plans/$id/styles'
+    | '/api/plans/$id/summary'
     | '/api/sewing-plans/$id/entries'
   fileRoutesById: FileRoutesById
 }
@@ -347,9 +419,12 @@ export interface RootRouteChildren {
   ApiScenariosRoute: typeof ApiScenariosRoute
   LineCapacityLineIdRoute: typeof LineCapacityLineIdRoute
   LineCapacityIndexRoute: typeof LineCapacityIndexRoute
+  ApiPlansIdRoute: typeof ApiPlansIdRouteWithChildren
+  ApiPlansGenerateRoute: typeof ApiPlansGenerateRoute
   ApiSewingPlansIdRoute: typeof ApiSewingPlansIdRouteWithChildren
   ApiSewingPlansUploadRoute: typeof ApiSewingPlansUploadRoute
   ApiSmvUploadRoute: typeof ApiSmvUploadRoute
+  ApiPlansIndexRoute: typeof ApiPlansIndexRoute
   ApiSewingPlansIndexRoute: typeof ApiSewingPlansIndexRoute
   ApiSmvIndexRoute: typeof ApiSmvIndexRoute
 }
@@ -503,6 +578,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSewingPlansIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/plans/': {
+      id: '/api/plans/'
+      path: '/api/plans'
+      fullPath: '/api/plans/'
+      preLoaderRoute: typeof ApiPlansIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/smv/upload': {
       id: '/api/smv/upload'
       path: '/api/smv/upload'
@@ -524,6 +606,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSewingPlansIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/plans/generate': {
+      id: '/api/plans/generate'
+      path: '/api/plans/generate'
+      fullPath: '/api/plans/generate'
+      preLoaderRoute: typeof ApiPlansGenerateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/plans/$id': {
+      id: '/api/plans/$id'
+      path: '/api/plans/$id'
+      fullPath: '/api/plans/$id'
+      preLoaderRoute: typeof ApiPlansIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/sewing-plans/$id/entries': {
       id: '/api/sewing-plans/$id/entries'
       path: '/entries'
@@ -531,8 +627,45 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSewingPlansIdEntriesRouteImport
       parentRoute: typeof ApiSewingPlansIdRoute
     }
+    '/api/plans/$id/summary': {
+      id: '/api/plans/$id/summary'
+      path: '/summary'
+      fullPath: '/api/plans/$id/summary'
+      preLoaderRoute: typeof ApiPlansIdSummaryRouteImport
+      parentRoute: typeof ApiPlansIdRoute
+    }
+    '/api/plans/$id/styles': {
+      id: '/api/plans/$id/styles'
+      path: '/styles'
+      fullPath: '/api/plans/$id/styles'
+      preLoaderRoute: typeof ApiPlansIdStylesRouteImport
+      parentRoute: typeof ApiPlansIdRoute
+    }
+    '/api/plans/$id/lines': {
+      id: '/api/plans/$id/lines'
+      path: '/lines'
+      fullPath: '/api/plans/$id/lines'
+      preLoaderRoute: typeof ApiPlansIdLinesRouteImport
+      parentRoute: typeof ApiPlansIdRoute
+    }
   }
 }
+
+interface ApiPlansIdRouteChildren {
+  ApiPlansIdLinesRoute: typeof ApiPlansIdLinesRoute
+  ApiPlansIdStylesRoute: typeof ApiPlansIdStylesRoute
+  ApiPlansIdSummaryRoute: typeof ApiPlansIdSummaryRoute
+}
+
+const ApiPlansIdRouteChildren: ApiPlansIdRouteChildren = {
+  ApiPlansIdLinesRoute: ApiPlansIdLinesRoute,
+  ApiPlansIdStylesRoute: ApiPlansIdStylesRoute,
+  ApiPlansIdSummaryRoute: ApiPlansIdSummaryRoute,
+}
+
+const ApiPlansIdRouteWithChildren = ApiPlansIdRoute._addFileChildren(
+  ApiPlansIdRouteChildren,
+)
 
 interface ApiSewingPlansIdRouteChildren {
   ApiSewingPlansIdEntriesRoute: typeof ApiSewingPlansIdEntriesRoute
@@ -565,9 +698,12 @@ const rootRouteChildren: RootRouteChildren = {
   ApiScenariosRoute: ApiScenariosRoute,
   LineCapacityLineIdRoute: LineCapacityLineIdRoute,
   LineCapacityIndexRoute: LineCapacityIndexRoute,
+  ApiPlansIdRoute: ApiPlansIdRouteWithChildren,
+  ApiPlansGenerateRoute: ApiPlansGenerateRoute,
   ApiSewingPlansIdRoute: ApiSewingPlansIdRouteWithChildren,
   ApiSewingPlansUploadRoute: ApiSewingPlansUploadRoute,
   ApiSmvUploadRoute: ApiSmvUploadRoute,
+  ApiPlansIndexRoute: ApiPlansIndexRoute,
   ApiSewingPlansIndexRoute: ApiSewingPlansIndexRoute,
   ApiSmvIndexRoute: ApiSmvIndexRoute,
 }
