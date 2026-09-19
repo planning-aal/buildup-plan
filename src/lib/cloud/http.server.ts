@@ -122,6 +122,19 @@ export function handler(
   };
 }
 
+/**
+ * Read-only listings should not fail when no database is configured yet —
+ * the application simply has no stored history to show.
+ */
+export async function listOrEmpty<T>(fallback: T, fn: () => Promise<T>): Promise<T> {
+  try {
+    return await fn();
+  } catch (error) {
+    if (error instanceof CloudUnavailableError) return fallback;
+    throw error;
+  }
+}
+
 /** Simple fixed-window limiter stored in D1; only used on expensive endpoints. */
 export async function rateLimit(key: string, limit: number, windowSeconds: number): Promise<void> {
   let db;
