@@ -705,3 +705,82 @@ export async function latestReportExport(factoryId: string, reportId: string) {
     .bind(factoryId, reportId)
     .first<{ id: string; file_name: string; storage_key: string; file_size: number }>();
 }
+
+/* ------------------------------------------- rehydration for the engine */
+
+/**
+ * Loads all normalized entries of a sewing plan version back into the exact
+ * shape the Phase 2 planning engine expects. The engine is never re-implemented
+ * server-side — it is the same module the browser uses.
+ */
+export async function loadPlanEntries(
+  factoryId: string,
+  sewingPlanId: string,
+): Promise<{ entries: SewingPlanEntry[]; lines: { id: string; factoryId: string; label: string; lineNo: number }[] }> {
+  const db = await requireDb();
+  const res = await db
+    .prepare(
+      "SELECT * FROM sewing_plan_entries WHERE factory_id = ?1 AND sewing_plan_id = ?2 ORDER BY entry_date, line_no",
+    )
+    .bind(factoryId, sewingPlanId)
+    .all<Record<string, never>>();
+
+  const entries = (res.results as unknown as Record<string, unknown>[]).map((r) => ({
+    id: String(r["id"]),
+    planId: sewingPlanId,
+    date: String(r["entry_date"]),
+    dayLabel: String(r["day_label"] ?? ""),
+    lineId: String(r["line_id"]),
+    lineNo: Number(r["line_no"] ?? 0),
+    lineLabel: String(r["line_label"] ?? ""),
+    rawText: String(r["raw_text"] ?? ""),
+    entryType: r["entry_type"] as SewingPlanEntry["entryType"],
+    styleNo: (r["style_no"] as string | null) ?? null,
+    secondaryCode: (r["secondary_code"] as string | null) ?? null,
+    poNo: (r["po_no"] as string | null) ?? null,
+    quantities: r["quantities_json"] ? (JSON.parse(String(r["quantities_json"])) as SewingPlanEntry["quantities"]) : [],
+    orderQty: (r["order_qty"] as number | null) ?? null,
+    deliveryDateStart: (r["delivery_start"] as string | null) ?? null,
+    deliveryDateEnd: (r["delivery_end"] as string | null) ?? null,
+    deliveryDateRaw: (r["delivery_raw"] as string | null) ?? null,
+    buyer: (r["buyer"] as string | null) ?? null,
+    planner: (r["planner"] as string | null) ?? null,
+    season: (r["season"] as string | null) ?? null,
+    additionalDescription: null,
+    targetQty: (r["target_qty"] as number | null) ?? null,
+    sourceSheet: String(r["source_sheet"] ?? ""),
+    sourceRow: Number(r["source_row"] ?? 0),
+    sourceColumn: Number(r["source_column"] ?? 0),
+    parseStatus: r["parse_status"] as SewingPlanEntry["parseStatus"],
+    flags: r["flags_json"] ? (JSON.parse(String(r["flags_json"])) as string[]) : [],
+  })) satisfies SewingPlanEntry[];
+
+  const seen = new Map<string, { id: string; factoryId: string; label: string; lineNo: number }>();
+  for (const e of entries) {
+    if (!seen.has(e.lineId)) {
+      seen.set(e.lineId, { id: e.lineId, factoryId, label: e.lineLabel, lineNo: e.lineNo });
+    }
+  }
+  return { entries, lines: [...seen.values()].sort((a, b) => a.lineNo - b.lineNo) };
+}
+
+export async function loadLineSettings(
+  factoryId: string,
+  period: string,
+): Promise<LinePlanSettings[]> {
+  const db = await requireDb();
+  const res = await db
+    .prepare("SELECT * FROM line_settings WHERE factory_id = ?1 AND period = ?2")
+    .bind(factoryId, period)
+    .all<Record<string, never>>();
+  return (res.results as unknown as Record<string, unknown>[]).map((r) => ({
+    lineId: String(r["line_id"]),
+    lineName: String(r["line_id"]),
+    active: Number(r["active"]) === 1,
+    workingHours: Number(r["working_hours"]),
+    manpower: Number(r["manpower"]),
+    ramp: JSON.parse(String(r["ramp_json"] ?? "{}")) as LinePlanSettings["ramp"],
+    hoursByDate: JSON.parse(String(r["hours_by_date_json"] ?? "{}")) as Record<string, number>,
+    calendarOverrides: JSON.parse(String(r["overrides_json"] ?? "{}")) as LinePlanSettings["calendarOverrides"],
+  }));
+}
