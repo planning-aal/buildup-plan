@@ -1,30 +1,58 @@
 # Cloudflare deployment — Armana Production Planning System
 
-Nothing in this guide runs automatically. The application keeps working with
-browser session data until these steps are completed with an Armana-owned
-Cloudflare account.
+## What am I actually setting up?
 
-## 1. Prerequisites
+Today the app runs only inside your browser. Plans, settings and SMV files
+disappear when the session ends. This deployment moves everything onto
+Cloudflare so data is saved permanently and everyone at Armana can use it.
 
-- Cloudflare account with Workers Paid (D1 + R2 enabled)
-- `bun install` completed locally
-- Wrangler: `bunx wrangler --version`
-- Access to the existing Worker for this project — **update it, do not create a second one**
+You are creating **three things** in your Cloudflare account:
 
-## 2. Login and inspect what already exists
+| # | Thing | What it is, in plain words | Used for |
+| --- | --- | --- | --- |
+| 1 | **Database (D1)** | Like a very reliable Excel workbook in the cloud | Plans, styles, SMVs, calendar, history |
+| 2 | **File storage (R2)** | A private cloud locker for files | Your uploaded Excel files and generated reports |
+| 3 | **The website (Worker)** | The app itself, running on Cloudflare's computers | capacity.armanagroup.com |
+
+The whole job is: create #1 and #2, tell the website where they are, set up
+logins, then switch the website on. Nothing in this guide runs automatically —
+you run each command yourself on your computer, in the project folder.
+
+**One-time setup:** Cloudflare Workers Paid plan (D1 and R2 need it), Node/Bun
+installed, and a terminal open in this project folder.
+
+**Golden rule:** if a Worker, database or bucket already exists from earlier
+work, REUSE it. Never delete existing ones.
+
+---
+
+## The 8 steps
+
+### Step 1 — Log in to Cloudflare from your computer
 
 ```bash
 bunx wrangler login
 bunx wrangler whoami
-bunx wrangler deployments list        # confirm the existing Worker
+```
+
+A browser window opens; sign in with the Armana Cloudflare account.
+`whoami` confirms it worked by showing your account.
+
+### Step 2 — Check what already exists
+
+```bash
+bunx wrangler deployments list
 bunx wrangler d1 list
 bunx wrangler r2 bucket list
 ```
 
-If a Worker for this project already exists, reuse its name in `wrangler.toml`.
-Never delete an existing Worker, database or bucket.
+If a Worker for this project already appears, keep its name and reuse it —
+do not create a second one. If `d1 list` or `bucket list` already shows an
+Armana database/bucket, skip creating that one in steps 3–4.
 
-## 3. Create the databases (one per environment)
+### Step 3 — Create the database (one per environment)
+
+Dev = for testing, Staging = dress rehearsal, Production = the real one.
 
 ```bash
 bunx wrangler d1 create armana-planning-dev
@@ -32,10 +60,11 @@ bunx wrangler d1 create armana-planning-staging
 bunx wrangler d1 create armana-planning-prod
 ```
 
-Copy each returned `database_id` into the matching `[[env.*.d1_databases]]`
-block in `wrangler.toml`.
+Each command prints a `database_id` (a long code). Paste that code into the
+matching `[[env.*.d1_databases]]` block in `wrangler.toml`. This is how the
+website finds its database.
 
-## 4. Create the file storage buckets
+### Step 4 — Create the file storage (one per environment)
 
 ```bash
 bunx wrangler r2 bucket create armana-planning-dev
@@ -43,14 +72,10 @@ bunx wrangler r2 bucket create armana-planning-staging
 bunx wrangler r2 bucket create armana-planning-prod
 ```
 
-The names must match the `bucket_name` values in `wrangler.toml`.
-Keep all buckets private. Files are served only through the authenticated
-download endpoints.
+Names must match `bucket_name` in `wrangler.toml`. Keep buckets private —
+files are downloaded only through the app after sign-in, never by a public link.
 
-## 5. Run the migrations
-
-The development environment is the top-level config in `wrangler.toml`, so dev
-commands take **no** `--env` flag. Staging and production do.
+### Step 5 — Build the tables inside each database
 
 ```bash
 bunx wrangler d1 migrations apply armana-planning-dev --remote
@@ -58,83 +83,82 @@ bunx wrangler d1 migrations apply armana-planning-staging --env staging --remote
 bunx wrangler d1 migrations apply armana-planning-prod --env production --remote
 ```
 
-Migrations are ordered and immutable: `0001_initial_schema`,
-`0002_smv_versioning`, `0003_production_plan`, `0004_reports`,
-`0005_audit_logs`. Never edit an applied migration — add a new one.
+This creates all 18 tables (plans, styles, SMVs, calendar, history...) and
+seeds Armana Apparels Ltd with Lines 1–12. Dev commands take **no** `--env`
+flag; staging and production do.
 
-## 6. Configuration and secrets
+Migrations are numbered (0001…0005) and frozen once applied. To change the
+database later, add a new numbered file — never edit an applied one.
 
-Non-secret values live in `wrangler.toml` (`ENVIRONMENT`, `APP_BASE_URL`,
-`ALLOWED_ORIGINS`). Secrets are set through Wrangler and never committed. The
-names must match what the Worker reads:
+### Step 6 — Set up sign-in (Cloudflare Access)
+
+1. Cloudflare dashboard → **Zero Trust → Access → Applications → Add a
+   self-hosted application** for your website address.
+2. Add a policy allowing the Armana email domain / identity provider.
+3. Cloudflare gives the app an "audience tag" (AUD). Save it as a secret:
 
 ```bash
-bunx wrangler secret put CF_ACCESS_AUD --env production            # Cloudflare Access application audience
+bunx wrangler secret put CF_ACCESS_AUD --env production
 bunx wrangler secret put CF_ACCESS_TEAM_DOMAIN --env production
 ```
 
-Set `APP_BASE_URL` per environment; the application never hard-codes a
-`workers.dev` address.
-
-## 7. Authentication (Cloudflare Access)
-
-1. Zero Trust → Access → Applications → Add a self-hosted application for the
-   Worker hostname.
-2. Add an Access policy for the Armana identity provider.
-3. Copy the application audience tag into the `CF_ACCESS_AUD` secret.
-
-The Worker reads `cf-access-authenticated-user-email` and
-`cf-access-jwt-assertion`, then looks the person up in the `users` table to get
-their role and factory. Add users with:
+4. List the people allowed to use the app (one command per person):
 
 ```bash
 bunx wrangler d1 execute armana-planning-prod --env production --remote \
   --command "INSERT INTO users (id, factory_id, email, user_name, role, active) VALUES ('usr_1','fac_armana_apparels','name@armanagroup.com','Full Name','PLANNER',1)"
 ```
 
-Roles: ADMIN, PLANNER, IE, PRODUCTION, MANAGEMENT, VIEWER.
+Roles: ADMIN (everything), PLANNER (upload + generate + export),
+IE (SMV + capacity), PRODUCTION (view), MANAGEMENT (dashboard + reports),
+VIEWER (read-only).
 
-## 8. Deploy
-
-Development is the top-level environment — no flag:
+### Step 7 — Switch it on (deploy)
 
 ```bash
-bunx wrangler deploy
+bunx wrangler deploy              # development
 bunx wrangler deploy --env staging
 bunx wrangler deploy --env production
 ```
 
-Verify after each deploy:
+After each deploy, open in a browser:
 
-```bash
-curl https://<hostname>/api/health
+```
+https://<your-worker-address>/api/health
 ```
 
 Expected: `{"status":"ok","environment":"production","services":{"database":true,"storage":true}}`.
+If it says `"database":false`, redo steps 3/5. If `"storage":false`, redo step 4.
 
-## 9. Custom domain
+### Step 8 — Give it the real address
 
-Workers & Pages → the Worker → Settings → Domains & Routes → Add custom domain
-→ `capacity.armanagroup.com`. Then update `APP_BASE_URL` for production and
-redeploy.
+Cloudflare dashboard → **Workers & Pages → your Worker → Settings →
+Domains & Routes → Add custom domain** → `capacity.armanagroup.com`.
+Then update `APP_BASE_URL` for production in `wrangler.toml` and deploy once
+more (`bunx wrangler deploy --env production`).
 
-## 10. Rollback
+---
+
+## If something goes wrong
+
+Undo a bad release:
 
 ```bash
 bunx wrangler deployments list --env production
 bunx wrangler rollback <deployment-id> --env production
 ```
 
-Database rollback is forward-only: write a new migration that reverses the
-change. Never drop tables holding historical plans or reports.
-
-## 11. Troubleshooting
-
 | Symptom | Cause | Fix |
 | --- | --- | --- |
-| `Cloud database is not configured` | D1 binding missing | check `[[env.*.d1_databases]]` binding name is `DB` |
-| `File storage is not configured` | R2 binding missing | binding name must be `FILES` |
-| 401 on every request | Access not in front of the hostname | add the Access application, or set `ENVIRONMENT=development` locally |
-| 403 for a signed-in person | no `users` row, or wrong role | insert/adjust the user row |
-| Upload returns 409 | the same file was already uploaded | choose USE EXISTING VERSION or UPLOAD AS NEW VERSION |
-| Export returns `EXPORT_VALIDATION_FAILED` | workbook failed its own checks | nothing is published; check the Worker log with the returned reference ID |
+| `Cloud database is not configured` | database ID not pasted into `wrangler.toml` | step 3: paste `database_id`, binding name must be `DB` |
+| `File storage is not configured` | bucket missing or misnamed | step 4, binding name must be `FILES` |
+| 401 on every request | sign-in (Access) not set up | step 6, or set `ENVIRONMENT=development` for local testing |
+| 403 for a signed-in person | their email is not in the `users` table | step 6.4: add the user row |
+| Upload says "already uploaded" | same file uploaded before | normal behaviour — choose USE EXISTING or NEW VERSION |
+| Export fails with a reference ID | workbook failed internal checks | nothing was published; send the reference ID for investigation |
+
+Database changes are forward-only: write a new migration, never delete tables
+holding historical plans or reports.
+
+Still stuck? Paste the exact error message here and I'll tell you precisely
+what to change.
