@@ -57,8 +57,7 @@ export const Route = createFileRoute("/api/reports/generate")({
         }
 
         const { generateWorkbookBlob, validateWorkbook } = await import("@/export/ExcelExporter");
-        const blob = await generateWorkbookBlob(report);
-        const buffer = await blob.arrayBuffer();
+        const { buffer } = await generateWorkbookBlob(report);
         const validation = await validateWorkbook(buffer, report);
         if (!validation.ok) {
           throw new ApiError(
