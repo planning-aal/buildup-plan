@@ -1,72 +1,45 @@
 #:schema node_modules/wrangler/config-schema.json
-# Armana Production Planning System — Cloudflare Workers configuration.
-#
-# Secrets are NEVER stored here. Use `wrangler secret put <NAME> --env <env>`.
-# See CLOUDFLARE_DEPLOYMENT.md for the full procedure.
 
-name = "armana-production-planning"
+# Armana Production Planning System
+# Cloudflare Workers production configuration
+
+name = "buildup-planv2"
 main = "src/server.ts"
+
 compatibility_date = "2026-01-01"
 compatibility_flags = ["nodejs_compat"]
+
+# ------------------------------------------------------------
+# Static assets
+# ------------------------------------------------------------
 
 [assets]
 directory = ".output/public"
 binding = "ASSETS"
 
-# ---------------------------------------------------------------- development
+# ------------------------------------------------------------
+# Production variables
+# ------------------------------------------------------------
+
 [vars]
-ENVIRONMENT = "development"
-APP_BASE_URL = "http://localhost:8080"
-ALLOWED_ORIGINS = "http://localhost:8080"
+ENVIRONMENT = "production"
+APP_BASE_URL = "https://buildup-planv2.planning-armanabd.workers.dev"
+ALLOWED_ORIGINS = "https://buildup-planv2.planning-armanabd.workers.dev"
+
+# ------------------------------------------------------------
+# Production D1
+# ------------------------------------------------------------
 
 [[d1_databases]]
-binding = "DB"
-database_name = "armana-planning-dev"
-database_id = "37277487-44f7-4bb3-bca4-b7e107e89488"
-migrations_dir = "migrations"
-
-[[r2_buckets]]
-binding = "FILES"
-bucket_name = "armana-planning-dev"
-
-# -------------------------------------------------------------------- staging
-[env.staging]
-name = "armana-production-planning-staging"
-
-[env.staging.vars]
-ENVIRONMENT = "staging"
-APP_BASE_URL = "https://staging.capacity.armanagroup.com"
-ALLOWED_ORIGINS = "https://staging.capacity.armanagroup.com"
-
-[[env.staging.d1_databases]]
-binding = "DB"
-database_name = "armana-planning-staging"
-database_id = "b2a77191-4ecb-4c1d-817f-e7896bba1a3a"
-migrations_dir = "migrations"
-
-[[env.staging.r2_buckets]]
-binding = "FILES"
-bucket_name = "armana-planning-staging"
-
-# ----------------------------------------------------------------- production
-[env.production]
-name = "armana-production-planning"
-
-[env.production.vars]
-ENVIRONMENT = "production"
-APP_BASE_URL = "https://capacity.armanagroup.com"
-ALLOWED_ORIGINS = "https://capacity.armanagroup.com"
-
-[[env.production.d1_databases]]
 binding = "DB"
 database_name = "armana-planning-prod"
 database_id = "REPLACE_WITH_PROD_D1_ID"
 migrations_dir = "migrations"
 
-[[env.production.r2_buckets]]
+# ------------------------------------------------------------
+# Production R2
+# ------------------------------------------------------------
+
+[[r2_buckets]]
 binding = "FILES"
 bucket_name = "armana-planning-prod"
-
-# [[env.production.routes]]
-# pattern = "capacity.armanagroup.com"
-# custom_domain = true
