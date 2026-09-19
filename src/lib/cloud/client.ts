@@ -47,10 +47,14 @@ export type StoredReport = {
 };
 
 async function api<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(path, { ...init, headers: { accept: "application/json", ...(init?.headers ?? {}) } });
+  const response = await fetch(path, {
+    ...init,
+    headers: { accept: "application/json", ...(init?.headers ?? {}) },
+  });
   const body = (await response.json().catch(() => ({}))) as Record<string, unknown>;
   if (!response.ok) {
-    const reference = typeof body["reference"] === "string" ? ` Reference ID: ${body["reference"]}` : "";
+    const reference =
+      typeof body["reference"] === "string" ? ` Reference ID: ${body["reference"]}` : "";
     throw new Error(`${String(body["error"] ?? "Something went wrong.")}${reference}`);
   }
   return body as T;

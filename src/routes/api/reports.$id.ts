@@ -23,7 +23,11 @@ export const Route = createFileRoute("/api/reports/$id")({
             totals: report["totals_json"] ? JSON.parse(String(report["totals_json"])) : null,
             blockers: report["blockers_json"] ? JSON.parse(String(report["blockers_json"])) : [],
             file: exported
-              ? { fileName: exported.file_name, fileSize: exported.file_size, download: `/api/reports/${report["id"]}/download` }
+              ? {
+                  fileName: exported.file_name,
+                  fileSize: exported.file_size,
+                  download: `/api/reports/${report["id"]}/download`,
+                }
               : null,
           },
           { requestId: ctx.requestId },

@@ -11,7 +11,11 @@ export const Route = createFileRoute("/api/smv/")({
         const version = new URL(request.url).searchParams.get("version");
         const records = await listSmv(ctx.factoryId, version);
         const latest = await latestSmvVersion(ctx.factoryId);
-        return json(request, { version: version ?? latest?.id ?? null, data: records }, { requestId: ctx.requestId });
+        return json(
+          request,
+          { version: version ?? latest?.id ?? null, data: records },
+          { requestId: ctx.requestId },
+        );
       }),
       // Manual add / bulk update: creates a new SMV version, never edits in place.
       POST: handler("smv.write", async ({ request, ctx }) => {
@@ -26,7 +30,9 @@ export const Route = createFileRoute("/api/smv/")({
           records: body.records ?? [],
           createdBy: ctx.user.id,
         });
-        await audit(ctx, "SMV_UPDATE", "SMV_VERSION", created.id, { new: { count: body.records?.length ?? 0 } });
+        await audit(ctx, "SMV_UPDATE", "SMV_VERSION", created.id, {
+          new: { count: body.records?.length ?? 0 },
+        });
         return json(request, created, { status: 201, requestId: ctx.requestId });
       }),
     },

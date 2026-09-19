@@ -26,7 +26,8 @@ export const Route = createFileRoute("/history")({
       { property: "og:title", content: "Plan history — Armana Production Planning" },
       {
         property: "og:description",
-        content: "Permanent version history of sewing plans, production plans and exported buildup reports.",
+        content:
+          "Permanent version history of sewing plans, production plans and exported buildup reports.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -87,9 +88,10 @@ function HistoryPage() {
             <div>
               <p className="font-medium">Permanent storage is not switched on yet</p>
               <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-                Plans and reports are currently kept for this browser session only. Once the production
-                environment is set up, every sewing plan, production plan and exported report will be stored
-                permanently and listed here. See CLOUDFLARE_DEPLOYMENT.md for the setup steps.
+                Plans and reports are currently kept for this browser session only. Once the
+                production environment is set up, every sewing plan, production plan and exported
+                report will be stored permanently and listed here. See CLOUDFLARE_DEPLOYMENT.md for
+                the setup steps.
               </p>
             </div>
           </CardContent>
@@ -107,7 +109,9 @@ function HistoryPage() {
             </CardHeader>
             <CardContent>
               {plans.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No sewing plan has been uploaded yet.</p>
+                <p className="text-sm text-muted-foreground">
+                  No sewing plan has been uploaded yet.
+                </p>
               ) : (
                 <table className="w-full text-sm">
                   <thead className="border-b text-left text-xs uppercase text-muted-foreground">
@@ -146,7 +150,9 @@ function HistoryPage() {
             </CardHeader>
             <CardContent>
               {productionPlans.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No production plan has been generated yet.</p>
+                <p className="text-sm text-muted-foreground">
+                  No production plan has been generated yet.
+                </p>
               ) : (
                 <table className="w-full text-sm">
                   <thead className="border-b text-left text-xs uppercase text-muted-foreground">

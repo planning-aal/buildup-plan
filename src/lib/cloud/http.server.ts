@@ -65,7 +65,11 @@ export class ApiError extends Error {
  */
 export function handler(
   permission: Permission | null,
-  fn: (args: { request: Request; ctx: ApiContext; params: Record<string, string> }) => Promise<Response>,
+  fn: (args: {
+    request: Request;
+    ctx: ApiContext;
+    params: Record<string, string>;
+  }) => Promise<Response>,
 ) {
   return async ({ request, params }: { request: Request; params?: Record<string, string> }) => {
     const requestId = newRequestId();
@@ -76,7 +80,8 @@ export function handler(
       const user = await currentUser(request);
       if (permission) {
         const { can } = await import("./roles");
-        if (!can(user.role, permission)) throw new AuthError("You do not have permission to do this.", 403);
+        if (!can(user.role, permission))
+          throw new AuthError("You do not have permission to do this.", 403);
       }
       return await fn({
         request,
@@ -93,7 +98,9 @@ export function handler(
               ? 503
               : 500;
       const message =
-        error instanceof AuthError || error instanceof ApiError || error instanceof CloudUnavailableError
+        error instanceof AuthError ||
+        error instanceof ApiError ||
+        error instanceof CloudUnavailableError
           ? error.message
           : "Something went wrong.";
       console.error(
@@ -106,7 +113,11 @@ export function handler(
           message: error instanceof Error ? error.message : String(error),
         }),
       );
-      return json(request, { error: message, requestId, reference: requestId }, { status, requestId });
+      return json(
+        request,
+        { error: message, requestId, reference: requestId },
+        { status, requestId },
+      );
     }
   };
 }
@@ -136,7 +147,11 @@ export async function rateLimit(key: string, limit: number, windowSeconds: numbe
     return;
   }
   if (row.hits >= limit) {
-    throw new ApiError("Too many requests — please wait a moment and try again.", 429, "RATE_LIMITED");
+    throw new ApiError(
+      "Too many requests — please wait a moment and try again.",
+      429,
+      "RATE_LIMITED",
+    );
   }
   await db.prepare("UPDATE rate_limits SET hits = hits + 1 WHERE bucket_key = ?1").bind(key).run();
 }
@@ -179,7 +194,10 @@ export async function sha256Hex(buffer: ArrayBuffer): Promise<string> {
 }
 
 export function pagination(url: URL, defaultLimit = 100, maxLimit = 1000) {
-  const limit = Math.min(Math.max(Number(url.searchParams.get("limit") ?? defaultLimit) || defaultLimit, 1), maxLimit);
+  const limit = Math.min(
+    Math.max(Number(url.searchParams.get("limit") ?? defaultLimit) || defaultLimit, 1),
+    maxLimit,
+  );
   const offset = Math.max(Number(url.searchParams.get("offset") ?? 0) || 0, 0);
   return { limit, offset };
 }

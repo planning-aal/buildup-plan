@@ -53,7 +53,11 @@ export const Route = createFileRoute("/api/reports/generate")({
         }
 
         if (body.export === false) {
-          return json(request, { id: saved.id, status: report.meta.status }, { status: 201, requestId: ctx.requestId });
+          return json(
+            request,
+            { id: saved.id, status: report.meta.status },
+            { status: 201, requestId: ctx.requestId },
+          );
         }
 
         const { generateWorkbookBlob, validateWorkbook } = await import("@/export/ExcelExporter");
@@ -78,7 +82,9 @@ export const Route = createFileRoute("/api/reports/generate")({
           fileSize: buffer.byteLength,
           createdBy: ctx.user.id,
         });
-        await audit(ctx, "EXCEL_EXPORT", "REPORT_EXPORT", exportId, { new: { reportId: saved.id, fileName: report.meta.fileName } });
+        await audit(ctx, "EXCEL_EXPORT", "REPORT_EXPORT", exportId, {
+          new: { reportId: saved.id, fileName: report.meta.fileName },
+        });
 
         return json(
           request,

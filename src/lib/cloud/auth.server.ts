@@ -85,7 +85,8 @@ export async function currentUser(request: Request): Promise<AuthUser> {
       active: number;
     }>();
 
-  if (!row || !row.active) throw new AuthError("This account has no access to the planning system.", 403);
+  if (!row || !row.active)
+    throw new AuthError("This account has no access to the planning system.", 403);
   if (!row.factory_id) throw new AuthError("This account is not assigned to a factory.", 403);
 
   return {

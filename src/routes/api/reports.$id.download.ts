@@ -21,7 +21,8 @@ export const Route = createFileRoute("/api/reports/$id/download")({
         if (!exported) throw new ApiError("This report has no stored workbook.", 404, "NO_EXPORT");
 
         const data = await getObject(exported.storage_key);
-        if (!data) throw new ApiError("The stored workbook could not be read.", 404, "MISSING_OBJECT");
+        if (!data)
+          throw new ApiError("The stored workbook could not be read.", 404, "MISSING_OBJECT");
 
         await audit(ctx, "EXCEL_DOWNLOAD", "REPORT_EXPORT", exported.id, { new: { reportId } });
 

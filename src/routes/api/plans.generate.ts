@@ -54,7 +54,8 @@ export const Route = createFileRoute("/api/plans/generate")({
 
         const monthKey = body.period.from.slice(0, 7);
         const { entries, lines } = await loadPlanEntries(ctx.factoryId, body.sewingPlanId);
-        if (!entries.length) throw new ApiError("That sewing plan has no imported records.", 422, "NO_ENTRIES");
+        if (!entries.length)
+          throw new ApiError("That sewing plan has no imported records.", 422, "NO_ENTRIES");
 
         if (body.lineSettings?.length) {
           await saveLineSettings(ctx.factoryId, monthKey, body.lineSettings, ctx.user.id);
@@ -62,14 +63,17 @@ export const Route = createFileRoute("/api/plans/generate")({
         const lineSettings = body.lineSettings?.length
           ? body.lineSettings
           : await loadLineSettings(ctx.factoryId, monthKey);
-        if (!lineSettings.length) throw new ApiError("Line settings have not been configured.", 422, "NO_LINE_SETTINGS");
+        if (!lineSettings.length)
+          throw new ApiError("Line settings have not been configured.", 422, "NO_LINE_SETTINGS");
 
         const calendar = await latestCalendar(ctx.factoryId, monthKey);
-        if (!calendar?.days.length) throw new ApiError("The working calendar is not configured.", 422, "NO_CALENDAR");
+        if (!calendar?.days.length)
+          throw new ApiError("The working calendar is not configured.", 422, "NO_CALENDAR");
 
         const smvVersion = await latestSmvVersion(ctx.factoryId);
         const smvMaster = await listSmv(ctx.factoryId, smvVersion?.id ?? null);
-        if (!smvMaster.length) throw new ApiError("No SMV master has been uploaded.", 422, "NO_SMV");
+        if (!smvMaster.length)
+          throw new ApiError("No SMV master has been uploaded.", 422, "NO_SMV");
 
         const { runPlanningEngine } = await import("@/planning/PlanningEngine");
         const result = runPlanningEngine({
@@ -123,7 +127,12 @@ export const Route = createFileRoute("/api/plans/generate")({
 
         return json(
           request,
-          { id: saved.id, version: saved.version, summary: result.factory, days: result.days.length },
+          {
+            id: saved.id,
+            version: saved.version,
+            summary: result.factory,
+            days: result.days.length,
+          },
           { status: 201, requestId: ctx.requestId },
         );
       }),

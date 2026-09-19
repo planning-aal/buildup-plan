@@ -14,7 +14,8 @@ export const Route = createFileRoute("/api/smv/upload")({
         const form = await request.formData();
         const file = form.get("file");
         if (!(file instanceof File)) throw new ApiError("No file was uploaded.");
-        if (file.size > MAX_BYTES) throw new ApiError("That file is larger than the 15 MB limit.", 413);
+        if (file.size > MAX_BYTES)
+          throw new ApiError("That file is larger than the 15 MB limit.", 413);
 
         const buffer = await file.arrayBuffer();
         const hash = await sha256Hex(buffer);
@@ -22,7 +23,8 @@ export const Route = createFileRoute("/api/smv/upload")({
         const { readSmvUpload } = await import("@/lib/app-state/smv-io");
         const parsed = readSmvUpload(buffer, file.name);
         const records = parsed.records;
-        if (!records.length) throw new ApiError("No SMV rows were found in that file.", 422, "EMPTY_SMV");
+        if (!records.length)
+          throw new ApiError("No SMV rows were found in that file.", 422, "EMPTY_SMV");
 
         const year = String(new Date().getUTCFullYear());
         // the version id is only known after insert, so store under the hash first

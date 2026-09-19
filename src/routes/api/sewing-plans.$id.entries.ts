@@ -16,7 +16,11 @@ export const Route = createFileRoute("/api/sewing-plans/$id/entries")({
           style: url.searchParams.get("style") ?? undefined,
           date: url.searchParams.get("date") ?? undefined,
         });
-        return json(request, { data: rows, paging: { limit, offset, total } }, { requestId: ctx.requestId });
+        return json(
+          request,
+          { data: rows, paging: { limit, offset, total } },
+          { requestId: ctx.requestId },
+        );
       }),
     },
   },

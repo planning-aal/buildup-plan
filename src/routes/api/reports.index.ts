@@ -9,7 +9,11 @@ export const Route = createFileRoute("/api/reports/")({
       GET: handler("report.read", async ({ request, ctx }) => {
         const { limit, offset } = pagination(new URL(request.url), 50, 200);
         const rows = await listReports(ctx.factoryId, limit, offset);
-        return json(request, { data: rows, paging: { limit, offset } }, { requestId: ctx.requestId });
+        return json(
+          request,
+          { data: rows, paging: { limit, offset } },
+          { requestId: ctx.requestId },
+        );
       }),
     },
   },

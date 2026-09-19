@@ -9,7 +9,11 @@ export const Route = createFileRoute("/api/plans/$id/styles")({
       GET: handler("plan.read", async ({ request, ctx, params }) => {
         const { limit, offset } = pagination(new URL(request.url), 200, 1000);
         const rows = await getPlanItems(params["id"]!, limit, offset);
-        return json(request, { data: rows, paging: { limit, offset } }, { requestId: ctx.requestId });
+        return json(
+          request,
+          { data: rows, paging: { limit, offset } },
+          { requestId: ctx.requestId },
+        );
       }),
     },
   },

@@ -28,7 +28,8 @@ export const Route = createFileRoute("/api/sewing-plans/upload")({
         const file = form.get("file");
         const mode = String(form.get("mode") ?? "AUTO"); // AUTO | USE_EXISTING | NEW_VERSION
         if (!(file instanceof File)) throw new ApiError("No file was uploaded.");
-        if (file.size > MAX_BYTES) throw new ApiError("That file is larger than the 30 MB limit.", 413);
+        if (file.size > MAX_BYTES)
+          throw new ApiError("That file is larger than the 30 MB limit.", 413);
 
         const buffer = await file.arrayBuffer();
         const hash = await sha256Hex(buffer);
@@ -40,7 +41,11 @@ export const Route = createFileRoute("/api/sewing-plans/upload")({
             {
               duplicate: true,
               message: "This file has already been uploaded.",
-              existing: { id: duplicate.id, fileName: duplicate.file_name, uploadedAt: duplicate.uploaded_at },
+              existing: {
+                id: duplicate.id,
+                fileName: duplicate.file_name,
+                uploadedAt: duplicate.uploaded_at,
+              },
               choices: ["USE_EXISTING", "NEW_VERSION"],
             },
             { status: 409, requestId: ctx.requestId },
@@ -54,7 +59,10 @@ export const Route = createFileRoute("/api/sewing-plans/upload")({
         const storageKey = sewingPlanKey(id, year, month);
 
         // 1. the original file is preserved before anything is parsed
-        await putObject(storageKey, buffer, file.type || undefined, { factoryId: ctx.factoryId, sewingPlanId: id });
+        await putObject(storageKey, buffer, file.type || undefined, {
+          factoryId: ctx.factoryId,
+          sewingPlanId: id,
+        });
 
         await insertSewingPlan({
           id,
@@ -71,7 +79,9 @@ export const Route = createFileRoute("/api/sewing-plans/upload")({
           uploaded_by: ctx.user.id,
           summary_json: null,
         });
-        await audit(ctx, "SEWING_PLAN_UPLOAD", "SEWING_PLAN", id, { new: { fileName: file.name, hash } });
+        await audit(ctx, "SEWING_PLAN_UPLOAD", "SEWING_PLAN", id, {
+          new: { fileName: file.name, hash },
+        });
 
         try {
           const { parseSewingPlanWorkbook } = await import("@/lib/import/parse-workbook");
@@ -84,7 +94,11 @@ export const Route = createFileRoute("/api/sewing-plans/upload")({
             id,
             parsed.issues.map((i) => ({ severity: i.severity, code: i.code, message: i.message })),
           );
-          await setSewingPlanStatus(ctx.factoryId, id, parsed.summary.criticalErrors ? "PARSED" : "VALIDATED");
+          await setSewingPlanStatus(
+            ctx.factoryId,
+            id,
+            parsed.summary.criticalErrors ? "PARSED" : "VALIDATED",
+          );
 
           return json(
             request,

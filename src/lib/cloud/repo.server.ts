@@ -57,10 +57,15 @@ export type SewingPlanRow = {
   summary_json: string | null;
 };
 
-export async function findPlanByHash(factoryId: string, hash: string): Promise<SewingPlanRow | null> {
+export async function findPlanByHash(
+  factoryId: string,
+  hash: string,
+): Promise<SewingPlanRow | null> {
   const db = await requireDb();
   return db
-    .prepare("SELECT * FROM sewing_plans WHERE factory_id = ?1 AND file_hash = ?2 ORDER BY uploaded_at DESC LIMIT 1")
+    .prepare(
+      "SELECT * FROM sewing_plans WHERE factory_id = ?1 AND file_hash = ?2 ORDER BY uploaded_at DESC LIMIT 1",
+    )
     .bind(factoryId, hash)
     .first<SewingPlanRow>();
 }
@@ -113,7 +118,11 @@ export async function insertSewingPlan(row: Omit<SewingPlanRow, "uploaded_at">):
     .run();
 }
 
-export async function setSewingPlanStatus(factoryId: string, id: string, status: string): Promise<void> {
+export async function setSewingPlanStatus(
+  factoryId: string,
+  id: string,
+  status: string,
+): Promise<void> {
   const db = await requireDb();
   await db
     .prepare("UPDATE sewing_plans SET status = ?3 WHERE factory_id = ?1 AND id = ?2")
@@ -261,13 +270,25 @@ export async function createSmvVersion(args: {
       .prepare(
         "INSERT INTO smv_master (id, factory_id, smv_version_id, style_no, buyer, smv, effective_date, status, source) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9)",
       )
-      .bind(newId("smv"), args.factoryId, id, r.styleNo, r.buyer, r.smv, r.effectiveDate, r.status, r.source),
+      .bind(
+        newId("smv"),
+        args.factoryId,
+        id,
+        r.styleNo,
+        r.buyer,
+        r.smv,
+        r.effectiveDate,
+        r.status,
+        r.source,
+      ),
   );
   await runBatches(db, statements);
   return { id, version };
 }
 
-export async function latestSmvVersion(factoryId: string): Promise<{ id: string; version: number } | null> {
+export async function latestSmvVersion(
+  factoryId: string,
+): Promise<{ id: string; version: number } | null> {
   const db = await requireDb();
   return db
     .prepare(
@@ -277,12 +298,17 @@ export async function latestSmvVersion(factoryId: string): Promise<{ id: string;
     .first<{ id: string; version: number }>();
 }
 
-export async function listSmv(factoryId: string, versionId: string | null): Promise<SmvMasterRecord[]> {
+export async function listSmv(
+  factoryId: string,
+  versionId: string | null,
+): Promise<SmvMasterRecord[]> {
   const db = await requireDb();
   const version = versionId ?? (await latestSmvVersion(factoryId))?.id;
   if (!version) return [];
   const res = await db
-    .prepare("SELECT * FROM smv_master WHERE factory_id = ?1 AND smv_version_id = ?2 ORDER BY style_no")
+    .prepare(
+      "SELECT * FROM smv_master WHERE factory_id = ?1 AND smv_version_id = ?2 ORDER BY style_no",
+    )
     .bind(factoryId, version)
     .all<{
       id: string;
@@ -323,7 +349,9 @@ export async function saveCalendar(
   const id = `CAL-${period}-${pad(version)}`;
 
   await db
-    .prepare("INSERT INTO calendar_versions (id, factory_id, period, version, created_by) VALUES (?1,?2,?3,?4,?5)")
+    .prepare(
+      "INSERT INTO calendar_versions (id, factory_id, period, version, created_by) VALUES (?1,?2,?3,?4,?5)",
+    )
     .bind(id, factoryId, period, version, createdBy)
     .run();
 
@@ -332,7 +360,17 @@ export async function saveCalendar(
       .prepare(
         "INSERT INTO working_calendar (id, calendar_version_id, factory_id, calendar_date, day_label, working_status, holiday_type, holiday_reason, working_hours) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9)",
       )
-      .bind(newId("cal"), id, factoryId, d.date, d.day, d.workingStatus, d.holidayType, d.holidayReason, d.workingHours),
+      .bind(
+        newId("cal"),
+        id,
+        factoryId,
+        d.date,
+        d.day,
+        d.workingStatus,
+        d.holidayType,
+        d.holidayReason,
+        d.workingHours,
+      ),
   );
   await runBatches(db, statements);
   return { id, version };
@@ -344,7 +382,9 @@ export async function latestCalendar(
 ): Promise<{ id: string; days: WorkingCalendarDay[] } | null> {
   const db = await requireDb();
   const version = await db
-    .prepare("SELECT id FROM calendar_versions WHERE factory_id = ?1 AND period = ?2 ORDER BY version DESC LIMIT 1")
+    .prepare(
+      "SELECT id FROM calendar_versions WHERE factory_id = ?1 AND period = ?2 ORDER BY version DESC LIMIT 1",
+    )
     .bind(factoryId, period)
     .first<{ id: string }>();
   if (!version) return null;
@@ -431,7 +471,12 @@ export async function saveProductionPlan(args: {
   snapshot: unknown;
 }): Promise<{ id: string; version: number }> {
   const db = await requireDb();
-  const { id, version } = await nextVersionId("PLAN", "production_plans", args.factoryId, args.period);
+  const { id, version } = await nextVersionId(
+    "PLAN",
+    "production_plans",
+    args.factoryId,
+    args.period,
+  );
 
   await db
     .prepare(
@@ -571,15 +616,21 @@ export async function getProductionPlan(factoryId: string, id: string) {
 
 export async function getPlanLines(planId: string) {
   const db = await requireDb();
-  return (await db.prepare("SELECT * FROM production_plan_lines WHERE plan_id = ?1 ORDER BY line_name").bind(planId).all())
-    .results;
+  return (
+    await db
+      .prepare("SELECT * FROM production_plan_lines WHERE plan_id = ?1 ORDER BY line_name")
+      .bind(planId)
+      .all()
+  ).results;
 }
 
 export async function getPlanItems(planId: string, limit: number, offset: number) {
   const db = await requireDb();
   return (
     await db
-      .prepare("SELECT * FROM production_plan_items WHERE plan_id = ?1 ORDER BY line_name, sequence LIMIT ?2 OFFSET ?3")
+      .prepare(
+        "SELECT * FROM production_plan_items WHERE plan_id = ?1 ORDER BY line_name, sequence LIMIT ?2 OFFSET ?3",
+      )
       .bind(planId, limit, offset)
       .all()
   ).results;
@@ -589,7 +640,9 @@ export async function getPlanDays(planId: string, limit: number, offset: number)
   const db = await requireDb();
   return (
     await db
-      .prepare("SELECT * FROM production_plan_days WHERE plan_id = ?1 ORDER BY plan_date, line_name LIMIT ?2 OFFSET ?3")
+      .prepare(
+        "SELECT * FROM production_plan_days WHERE plan_id = ?1 ORDER BY plan_date, line_name LIMIT ?2 OFFSET ?3",
+      )
       .bind(planId, limit, offset)
       .all()
   ).results;
@@ -597,11 +650,18 @@ export async function getPlanDays(planId: string, limit: number, offset: number)
 
 /* ------------------------------------------------------------- scenarios */
 
-export async function createScenario(factoryId: string, name: string, overrides: unknown, createdBy: string) {
+export async function createScenario(
+  factoryId: string,
+  name: string,
+  overrides: unknown,
+  createdBy: string,
+) {
   const db = await requireDb();
   const id = newId("scn");
   await db
-    .prepare("INSERT INTO scenarios (id, factory_id, name, overrides_json, created_by) VALUES (?1,?2,?3,?4,?5)")
+    .prepare(
+      "INSERT INTO scenarios (id, factory_id, name, overrides_json, created_by) VALUES (?1,?2,?3,?4,?5)",
+    )
     .bind(id, factoryId, name, JSON.stringify(overrides ?? {}), createdBy)
     .run();
   return { id, name };
@@ -611,7 +671,9 @@ export async function listScenarios(factoryId: string) {
   const db = await requireDb();
   return (
     await db
-      .prepare("SELECT id, name, overrides_json, is_base, created_at FROM scenarios WHERE factory_id = ?1 ORDER BY created_at DESC")
+      .prepare(
+        "SELECT id, name, overrides_json, is_base, created_at FROM scenarios WHERE factory_id = ?1 ORDER BY created_at DESC",
+      )
       .bind(factoryId)
       .all()
   ).results;
@@ -690,9 +752,20 @@ export async function saveReportExport(args: {
     .prepare(
       "INSERT INTO report_exports (id, report_id, factory_id, file_name, storage_key, file_size, created_by) VALUES (?1,?2,?3,?4,?5,?6,?7)",
     )
-    .bind(id, args.reportId, args.factoryId, args.fileName, args.storageKey, args.fileSize, args.createdBy)
+    .bind(
+      id,
+      args.reportId,
+      args.factoryId,
+      args.fileName,
+      args.storageKey,
+      args.fileSize,
+      args.createdBy,
+    )
     .run();
-  await db.prepare("UPDATE reports SET status = 'EXPORTED' WHERE id = ?1").bind(args.reportId).run();
+  await db
+    .prepare("UPDATE reports SET status = 'EXPORTED' WHERE id = ?1")
+    .bind(args.reportId)
+    .run();
   return id;
 }
 
@@ -716,7 +789,10 @@ export async function latestReportExport(factoryId: string, reportId: string) {
 export async function loadPlanEntries(
   factoryId: string,
   sewingPlanId: string,
-): Promise<{ entries: SewingPlanEntry[]; lines: { id: string; factoryId: string; label: string; lineNo: number }[] }> {
+): Promise<{
+  entries: SewingPlanEntry[];
+  lines: { id: string; factoryId: string; label: string; lineNo: number }[];
+}> {
   const db = await requireDb();
   const res = await db
     .prepare(
@@ -738,7 +814,9 @@ export async function loadPlanEntries(
     styleNo: (r["style_no"] as string | null) ?? null,
     secondaryCode: (r["secondary_code"] as string | null) ?? null,
     poNo: (r["po_no"] as string | null) ?? null,
-    quantities: r["quantities_json"] ? (JSON.parse(String(r["quantities_json"])) as SewingPlanEntry["quantities"]) : [],
+    quantities: r["quantities_json"]
+      ? (JSON.parse(String(r["quantities_json"])) as SewingPlanEntry["quantities"])
+      : [],
     orderQty: (r["order_qty"] as number | null) ?? null,
     deliveryDateStart: (r["delivery_start"] as string | null) ?? null,
     deliveryDateEnd: (r["delivery_end"] as string | null) ?? null,
@@ -781,7 +859,9 @@ export async function loadLineSettings(
     manpower: Number(r["manpower"]),
     ramp: JSON.parse(String(r["ramp_json"] ?? "{}")) as LinePlanSettings["ramp"],
     hoursByDate: JSON.parse(String(r["hours_by_date_json"] ?? "{}")) as Record<string, number>,
-    calendarOverrides: JSON.parse(String(r["overrides_json"] ?? "{}")) as LinePlanSettings["calendarOverrides"],
+    calendarOverrides: JSON.parse(
+      String(r["overrides_json"] ?? "{}"),
+    ) as LinePlanSettings["calendarOverrides"],
   }));
 }
 

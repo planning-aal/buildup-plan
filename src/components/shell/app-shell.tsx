@@ -95,9 +95,7 @@ export function AppShell({
                   Production Planning · Armana Apparels Ltd
                 </p>
                 <h1 className="text-base font-semibold tracking-tight">{title}</h1>
-                {subtitle ? (
-                  <p className="text-xs text-muted-foreground">{subtitle}</p>
-                ) : null}
+                {subtitle ? <p className="text-xs text-muted-foreground">{subtitle}</p> : null}
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
