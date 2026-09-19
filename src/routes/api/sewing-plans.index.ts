@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { handler, json, pagination } from "@/lib/cloud/http.server";
+import { handler, json, listOrEmpty, pagination } from "@/lib/cloud/http.server";
 import { listSewingPlans } from "@/lib/cloud/repo.server";
 
 export const Route = createFileRoute("/api/sewing-plans/")({
@@ -8,7 +8,7 @@ export const Route = createFileRoute("/api/sewing-plans/")({
     handlers: {
       GET: handler("plan.read", async ({ request, ctx }) => {
         const { limit, offset } = pagination(new URL(request.url), 50, 200);
-        const rows = await listSewingPlans(ctx.factoryId, limit, offset);
+        const rows = await listOrEmpty([], () => listSewingPlans(ctx.factoryId, limit, offset));
         return json(
           request,
           {
