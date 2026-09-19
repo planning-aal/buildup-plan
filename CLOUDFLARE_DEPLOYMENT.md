@@ -31,8 +31,8 @@ work, REUSE it. Never delete existing ones.
 ### Step 1 — Log in to Cloudflare from your computer
 
 ```bash
-bunx wrangler login
-bunx wrangler whoami
+npx wrangler login
+npx wrangler whoami
 ```
 
 A browser window opens; sign in with the Armana Cloudflare account.
@@ -41,9 +41,9 @@ A browser window opens; sign in with the Armana Cloudflare account.
 ### Step 2 — Check what already exists
 
 ```bash
-bunx wrangler deployments list
-bunx wrangler d1 list
-bunx wrangler r2 bucket list
+npx wrangler deployments list
+npx wrangler d1 list
+npx wrangler r2 bucket list
 ```
 
 If a Worker for this project already appears, keep its name and reuse it —
@@ -55,9 +55,9 @@ Armana database/bucket, skip creating that one in steps 3–4.
 Dev = for testing, Staging = dress rehearsal, Production = the real one.
 
 ```bash
-bunx wrangler d1 create armana-planning-dev
-bunx wrangler d1 create armana-planning-staging
-bunx wrangler d1 create armana-planning-prod
+npx wrangler d1 create armana-planning-dev
+npx wrangler d1 create armana-planning-staging
+npx wrangler d1 create armana-planning-prod
 ```
 
 Each command prints a `database_id` (a long code). Paste that code into the
@@ -67,9 +67,9 @@ website finds its database.
 ### Step 4 — Create the file storage (one per environment)
 
 ```bash
-bunx wrangler r2 bucket create armana-planning-dev
-bunx wrangler r2 bucket create armana-planning-staging
-bunx wrangler r2 bucket create armana-planning-prod
+npx wrangler r2 bucket create armana-planning-dev
+npx wrangler r2 bucket create armana-planning-staging
+npx wrangler r2 bucket create armana-planning-prod
 ```
 
 Names must match `bucket_name` in `wrangler.toml`. Keep buckets private —
@@ -78,9 +78,9 @@ files are downloaded only through the app after sign-in, never by a public link.
 ### Step 5 — Build the tables inside each database
 
 ```bash
-bunx wrangler d1 migrations apply armana-planning-dev --remote
-bunx wrangler d1 migrations apply armana-planning-staging --env staging --remote
-bunx wrangler d1 migrations apply armana-planning-prod --env production --remote
+npx wrangler d1 migrations apply armana-planning-dev --remote
+npx wrangler d1 migrations apply armana-planning-staging --env staging --remote
+npx wrangler d1 migrations apply armana-planning-prod --env production --remote
 ```
 
 This creates all 18 tables (plans, styles, SMVs, calendar, history...) and
@@ -98,14 +98,14 @@ database later, add a new numbered file — never edit an applied one.
 3. Cloudflare gives the app an "audience tag" (AUD). Save it as a secret:
 
 ```bash
-bunx wrangler secret put CF_ACCESS_AUD --env production
-bunx wrangler secret put CF_ACCESS_TEAM_DOMAIN --env production
+npx wrangler secret put CF_ACCESS_AUD --env production
+npx wrangler secret put CF_ACCESS_TEAM_DOMAIN --env production
 ```
 
 4. List the people allowed to use the app (one command per person):
 
 ```bash
-bunx wrangler d1 execute armana-planning-prod --env production --remote \
+npx wrangler d1 execute armana-planning-prod --env production --remote \
   --command "INSERT INTO users (id, factory_id, email, user_name, role, active) VALUES ('usr_1','fac_armana_apparels','name@armanagroup.com','Full Name','PLANNER',1)"
 ```
 
@@ -116,9 +116,9 @@ VIEWER (read-only).
 ### Step 7 — Switch it on (deploy)
 
 ```bash
-bunx wrangler deploy              # development
-bunx wrangler deploy --env staging
-bunx wrangler deploy --env production
+npx wrangler deploy              # development
+npx wrangler deploy --env staging
+npx wrangler deploy --env production
 ```
 
 After each deploy, open in a browser:
@@ -135,7 +135,7 @@ If it says `"database":false`, redo steps 3/5. If `"storage":false`, redo step 4
 Cloudflare dashboard → **Workers & Pages → your Worker → Settings →
 Domains & Routes → Add custom domain** → `capacity.armanagroup.com`.
 Then update `APP_BASE_URL` for production in `wrangler.toml` and deploy once
-more (`bunx wrangler deploy --env production`).
+more (`npx wrangler deploy --env production`).
 
 ---
 
@@ -144,8 +144,8 @@ more (`bunx wrangler deploy --env production`).
 Undo a bad release:
 
 ```bash
-bunx wrangler deployments list --env production
-bunx wrangler rollback <deployment-id> --env production
+npx wrangler deployments list --env production
+npx wrangler rollback <deployment-id> --env production
 ```
 
 | Symptom | Cause | Fix |
