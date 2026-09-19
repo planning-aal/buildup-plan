@@ -30,12 +30,23 @@ ALLOWED_ORIGINS = "https://buildup-planv2.planning-armanabd.workers.dev"
 # Production D1
 # ------------------------------------------------------------
 
+[env.production]
+name = "armana-production-planning"
+
+[env.production.vars]
+ENVIRONMENT = "production"
+APP_BASE_URL = "https://buildup-planv2.planning-armanabd.workers.dev"
+ALLOWED_ORIGINS = "https://buildup-planv2.planning-armanabd.workers.dev"
+
 [[env.production.d1_databases]]
 binding = "DB"
 database_name = "armana-planning-prod"
 database_id = "37277487-447f-4bb3-bca4-b7e107e89488"
 migrations_dir = "migrations"
 
+[[env.production.r2_buckets]]
+binding = "FILES"
+bucket_name = "armana-planning-prod"
 # ------------------------------------------------------------
 # Production R2
 # ------------------------------------------------------------
