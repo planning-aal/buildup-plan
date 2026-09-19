@@ -1,56 +1,70 @@
 #:schema node_modules/wrangler/config-schema.json
 
-# Armana Production Planning System
-# Cloudflare Workers production configuration
+# ============================================================
+# ARMANA PRODUCTION PLANNING SYSTEM
+# Cloudflare Workers
+# ============================================================
 
 name = "buildup-planv2"
+
 main = "src/server.ts"
 
 compatibility_date = "2026-01-01"
+
 compatibility_flags = ["nodejs_compat"]
 
-# ------------------------------------------------------------
-# Static assets
-# ------------------------------------------------------------
+# ============================================================
+# STATIC ASSETS
+# ============================================================
 
 [assets]
 directory = ".output/public"
 binding = "ASSETS"
 
-# ------------------------------------------------------------
-# Production variables
-# ------------------------------------------------------------
+# ============================================================
+# PRODUCTION ENVIRONMENT
+# ============================================================
 
 [vars]
+
 ENVIRONMENT = "production"
+
 APP_BASE_URL = "https://buildup-planv2.planning-armanabd.workers.dev"
+
 ALLOWED_ORIGINS = "https://buildup-planv2.planning-armanabd.workers.dev"
 
-# ------------------------------------------------------------
-# Production D1
-# ------------------------------------------------------------
+# ============================================================
+# PRODUCTION D1 DATABASE
+# ============================================================
 
-[env.production]
-name = "armana-production-planning"
+[[d1_databases]]
 
-[env.production.vars]
-ENVIRONMENT = "production"
-APP_BASE_URL = "https://buildup-planv2.planning-armanabd.workers.dev"
-ALLOWED_ORIGINS = "https://buildup-planv2.planning-armanabd.workers.dev"
-
-[[env.production.d1_databases]]
 binding = "DB"
+
 database_name = "armana-planning-prod"
+
 database_id = "37277487-447f-4bb3-bca4-b7e107e89488"
+
 migrations_dir = "migrations"
 
-[[env.production.r2_buckets]]
-binding = "FILES"
-bucket_name = "armana-planning-prod"
-# ------------------------------------------------------------
-# Production R2
-# ------------------------------------------------------------
+# ============================================================
+# PRODUCTION R2 STORAGE
+# ============================================================
 
 [[r2_buckets]]
+
 binding = "FILES"
+
 bucket_name = "armana-planning-prod"
+
+# ============================================================
+# CUSTOM DOMAIN
+# ============================================================
+#
+# Enable this only after the workers.dev deployment works.
+#
+# [[routes]]
+# pattern = "capacity.armanagroup.com"
+# custom_domain = true
+#
+# ============================================================
