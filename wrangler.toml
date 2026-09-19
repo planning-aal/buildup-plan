@@ -33,7 +33,7 @@ ALLOWED_ORIGINS = "https://buildup-planv2.planning-armanabd.workers.dev"
 [[d1_databases]]
 binding = "DB"
 database_name = "armana-planning-prod"
-database_id = "REPLACE_WITH_PROD_D1_ID"
+database_id = "37277487-447f-4bb3-bca4-b7e107e89488"
 migrations_dir = "migrations"
 
 # ------------------------------------------------------------
