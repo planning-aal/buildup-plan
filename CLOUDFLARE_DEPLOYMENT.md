@@ -89,14 +89,6 @@ their role and factory. Add users with:
 
 ```bash
 bunx wrangler d1 execute armana-planning-prod --env production --remote \
-  --command "INSERT INTO users (id, email, user_name, role, factory_id, active) VALUES ('usr_1','fac_armana_apparels','name@armanagroup.com','Full Name','PLANNER',1)"
-```
-
-Wait — the columns are positional. The correct order is
-`id, factory_id, email, user_name, role, active`:
-
-```bash
-bunx wrangler d1 execute armana-planning-prod --env production --remote \
   --command "INSERT INTO users (id, factory_id, email, user_name, role, active) VALUES ('usr_1','fac_armana_apparels','name@armanagroup.com','Full Name','PLANNER',1)"
 ```
 
