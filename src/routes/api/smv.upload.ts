@@ -20,7 +20,8 @@ export const Route = createFileRoute("/api/smv/upload")({
         const hash = await sha256Hex(buffer);
 
         const { readSmvUpload } = await import("@/lib/app-state/smv-io");
-        const records = readSmvUpload(buffer, file.name);
+        const parsed = readSmvUpload(buffer, file.name);
+        const records = parsed.records;
         if (!records.length) throw new ApiError("No SMV rows were found in that file.", 422, "EMPTY_SMV");
 
         const year = String(new Date().getUTCFullYear());
