@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import {
+  Archive,
   CalendarDays,
   FileSpreadsheet,
   FileText,
@@ -28,6 +29,7 @@ const NAV = [
   { to: "/scenarios", label: "Scenarios", icon: SlidersHorizontal },
   { to: "/buildup", label: "Production Buildup", icon: FileSpreadsheet },
   { to: "/reports", label: "Reports", icon: FileText },
+  { to: "/history", label: "Plan History", icon: Archive },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
 
@@ -93,9 +95,7 @@ export function AppShell({
                   Production Planning · Armana Apparels Ltd
                 </p>
                 <h1 className="text-base font-semibold tracking-tight">{title}</h1>
-                {subtitle ? (
-                  <p className="text-xs text-muted-foreground">{subtitle}</p>
-                ) : null}
+                {subtitle ? <p className="text-xs text-muted-foreground">{subtitle}</p> : null}
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
