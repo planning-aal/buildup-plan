@@ -41,7 +41,7 @@ ALLOWED_ORIGINS = "https://staging.capacity.armanagroup.com"
 [[env.staging.d1_databases]]
 binding = "DB"
 database_name = "armana-planning-staging"
-database_id = "REPLACE_WITH_STAGING_D1_ID"
+database_id = "b2a77191-4ecb-4c1d-817f-e7896bba1a3a"
 migrations_dir = "migrations"
 
 [[env.staging.r2_buckets]]
