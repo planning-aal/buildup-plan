@@ -18,8 +18,8 @@ The whole job is: create #1 and #2, tell the website where they are, set up
 logins, then switch the website on. Nothing in this guide runs automatically —
 you run each command yourself on your computer, in the project folder.
 
-**One-time setup:** Cloudflare Workers Paid plan (D1 and R2 need it), Node/Bun
-installed, and a terminal open in this project folder.
+**One-time setup:** Cloudflare Workers Paid plan (D1 and R2 need it), and
+Node.js installed on your computer (free download from nodejs.org — choose LTS).
 
 **Golden rule:** if a Worker, database or bucket already exists from earlier
 work, REUSE it. Never delete existing ones.
@@ -113,9 +113,12 @@ Roles: ADMIN (everything), PLANNER (upload + generate + export),
 IE (SMV + capacity), PRODUCTION (view), MANAGEMENT (dashboard + reports),
 VIEWER (read-only).
 
-### Step 7 — Switch it on (deploy)
+### Step 7 — Build and switch on (deploy)
+
+The app must be built once, then uploaded:
 
 ```bash
+npm run build                    # builds the app (do this before every deploy)
 npx wrangler deploy              # development
 npx wrangler deploy --env staging
 npx wrangler deploy --env production
